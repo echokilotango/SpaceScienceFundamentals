@@ -1,9 +1,0 @@
-Planet,Type,Diameter (km),Distance (AU),Orbital Period (days),Orbital Period (years),Temp Min (°C),Temp Max (°C),Color Code
-Earth,Terrestrial,12742,1.0,365.25,1.0,-89,70,#4A90E2
-Jupiter,Gas Giant,139820,5.2,4333,11.86,-108,24,#C88B3A
-Mars,Terrestrial,6779,1.52,687,1.88,-143,-35,#E27B58
-Mercury,Terrestrial,4879,0.4,88,0.24,-160,430,#8C7853
-Neptune,Ice Giant,49244,30.1,60182,164.77,-197,-200,#4B70DD
-Saturn,Gas Giant,116460,9.5,10759,29.46,-140,-80,#EAD6A5
-Uranus,Ice Giant,50724,19.2,30688,84.02,-197,-197,#4FD0E7
-Venus,Terrestrial,12104,0.7,225,0.62,480,480,#FFC649
