@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Habitable Zone Lab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:100%; height:100%; overflow:hidden; background:#03040a; color:#e8e6e0;
+               font-family:'Inter', system-ui, sans-serif; -webkit-font-smoothing:antialiased;
+               user-select:none; -webkit-user-select:none; }
+  canvas { display:block; }
+  #app { position:fixed; inset:0; }
+
+  /* ---------- Top bar + score ---------- */
+  .topbar {
+    position:fixed; top:22px; left:50%; transform:translateX(-50%);
+    display:flex; gap:2px; z-index:20;
+    background:rgba(10,12,22,0.55); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+    border:1px solid rgba(255,255,255,0.08); border-radius:100px; padding:5px;
+  }
+  .tab {
+    padding:10px 24px; border-radius:100px; cursor:pointer; border:none; background:transparent;
+    font:500 11px/1 'Inter'; letter-spacing:0.14em; text-transform:uppercase;
+    color:rgba(232,230,224,0.55); transition:color 0.3s, background 0.3s;
+  }
+  .tab.active { background:rgba(122,203,255,0.14); color:#7acbff; }
+  .tab:hover:not(.active) { color:#e8e6e0; }
+
+  .score-badge {
+    /* Hidden in sandbox mode by default; missions show it. */
+    position:fixed; top:22px; right:24px; z-index:20; display:none;
+    background:rgba(10,12,22,0.55); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+    border:1px solid rgba(255,255,255,0.08); border-radius:100px; padding:8px 16px;
+    align-items:center; gap:10px;
+  }
+  .score-badge.on { display:flex; }
+  .score-label { font-family:'JetBrains Mono', monospace; font-size:9px; letter-spacing:0.2em;
+                  text-transform:uppercase; color:rgba(232,230,224,0.5); }
+  .score-value { font-family:'JetBrains Mono', monospace; font-size:14px; color:rgba(232,230,224,0.85); font-weight:500;
+                  min-width:44px; text-align:right; }
+
+  /* ---------- Star picker ---------- */
+  .star-picker {
+    position:fixed; top:22px; left:24px; z-index:20;
+    display:flex; gap:2px;
+    background:rgba(10,12,22,0.55); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+    border:1px solid rgba(255,255,255,0.08); border-radius:100px; padding:5px;
+  }
+  .star-picker button {
+    padding:8px 16px; border-radius:100px; cursor:pointer; border:none; background:transparent;
+    font:500 10px/1 'JetBrains Mono', monospace; letter-spacing:0.15em; text-transform:uppercase;
+    color:rgba(232,230,224,0.55); transition:color 0.3s, background 0.3s;
+  }
+  .star-picker button.active { background:rgba(122,203,255,0.14); color:#7acbff; }
+  .star-picker button:hover:not(.active) { color:#e8e6e0; }
+
+  /* ---------- Side rails ---------- */
+  .rail {
+    position:fixed; z-index:15;
+    width:240px; max-height:66vh;
+    background:rgba(10,12,22,0.55); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+    border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:16px;
+    overflow-y:auto; transition:opacity 0.3s;
+  }
+  .rail::-webkit-scrollbar { width:4px; }
+  .rail::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:2px; }
+  .rail-left  { left:24px; top:80px; }
+  .rail-right { right:24px; top:80px; }
+  .rail-title {
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.2em;
+    text-transform:uppercase; color:#7acbff; margin-bottom:12px;
+  }
+  .rail.hidden { opacity:0; pointer-events:none; }
+
+  /* ---------- Cards ---------- */
+  .card {
+    background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08);
+    border-radius:10px; padding:10px 12px; margin-bottom:8px; cursor:grab;
+    transition:transform 0.15s, border-color 0.2s, background 0.2s;
+    position:relative;
+  }
+  .card:hover { border-color:rgba(122,203,255,0.4); background:rgba(122,203,255,0.06); transform:translateY(-1px); }
+  .card:active { cursor:grabbing; }
+  .card.used { opacity:0.35; }
+  .card-title { font-size:13px; font-weight:500; margin-bottom:2px; }
+  .card-sub {
+    font-family:'JetBrains Mono', monospace; font-size:9px; letter-spacing:0.1em;
+    text-transform:uppercase; color:rgba(232,230,224,0.5);
+  }
+  .card-stats { margin-top:6px; display:flex; gap:10px; flex-wrap:wrap;
+                font-family:'JetBrains Mono', monospace; font-size:10px; color:rgba(232,230,224,0.7); }
+  .card-stat b { color:#e8e6e0; font-weight:500; }
+  .card-org .card-title { color:#a78bfa; }
+  .card-planet .card-title { color:#e8e6e0; }
+
+  /* Drag ghost */
+  .drag-ghost {
+    position:fixed; z-index:100; pointer-events:none;
+    background:rgba(122,203,255,0.15); border:1px solid rgba(122,203,255,0.5);
+    border-radius:10px; padding:6px 12px; font-size:12px; color:#e8e6e0;
+    box-shadow:0 4px 24px rgba(122,203,255,0.3);
+    transform:translate(-50%, -50%);
+  }
+
+  /* ---------- Info panel ---------- */
+  .info-panel {
+    position:fixed; left:24px; bottom:170px; z-index:15;
+    width:min(340px, 25vw);
+    background:rgba(10,12,22,0.55); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+    border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:16px;
+    transition:opacity 0.3s;
+  }
+  .info-panel.hidden { opacity:0; pointer-events:none; }
+  .info-panel .subtitle {
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.2em;
+    text-transform:uppercase; color:#7acbff; margin-bottom:6px;
+  }
+  .info-panel h2 { font-size:18px; font-weight:500; margin-bottom:6px; }
+  .info-panel p { font-size:12px; color:rgba(232,230,224,0.72); line-height:1.5; }
+  .info-panel .stats { display:grid; grid-template-columns:1fr 1fr; gap:4px 12px; margin-top:10px;
+                       font-family:'JetBrains Mono', monospace; font-size:10px; }
+  .info-panel .stats .k { color:rgba(232,230,224,0.5); }
+  .info-panel .stats .v { color:#e8e6e0; text-align:right; }
+
+  /* ---------- Verdict toasts ---------- */
+  .toasts {
+    position:fixed; right:24px; bottom:170px; z-index:30;
+    display:flex; flex-direction:column; gap:8px; align-items:flex-end;
+  }
+  .toast {
+    background:rgba(10,12,22,0.85); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+    border:1px solid rgba(255,255,255,0.1); border-left:3px solid #7acbff;
+    border-radius:8px; padding:10px 14px; min-width:220px; max-width:320px;
+    animation:toastIn 0.35s ease-out;
+  }
+  .toast.good { border-left-color:#7acbff; }
+  .toast.bad  { border-left-color:#da3c19; }
+  .toast.info { border-left-color:#a78bfa; }
+  .toast .toast-title { font-size:12px; font-weight:500; margin-bottom:2px; }
+  .toast .toast-body { font-size:11px; color:rgba(232,230,224,0.7); line-height:1.4; }
+  .toast .toast-score { float:right; font-family:'JetBrains Mono', monospace; font-size:11px; color:#7acbff; }
+  .toast .toast-score.neg { color:#da3c19; }
+  @keyframes toastIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+  @keyframes toastOut { to { opacity:0; transform:translateX(20px); } }
+
+  /* ---------- Star info panel ---------- */
+  .star-info {
+    position:fixed; left:24px; bottom:24px; z-index:10;
+    width:min(320px, 26vw);
+    background:rgba(10,12,22,0.55); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+    border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:14px 18px;
+  }
+  .star-info .subtitle {
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.2em;
+    text-transform:uppercase; color:#7acbff; margin-bottom:4px;
+  }
+  .star-info h3 { font-size:15px; font-weight:500; margin-bottom:10px; }
+  .star-info .row {
+    display:flex; justify-content:space-between; align-items:baseline;
+    font-family:'JetBrains Mono', monospace; font-size:11px; padding:3px 0;
+    border-top:1px solid rgba(255,255,255,0.06);
+  }
+  .star-info .row:first-of-type { border-top:none; }
+  .star-info .k { color:rgba(232,230,224,0.55); }
+  .star-info .v { color:#e8e6e0; }
+  .star-info .note { font-size:11px; line-height:1.5; color:rgba(232,230,224,0.65); margin-top:8px;
+                      padding-top:8px; border-top:1px solid rgba(255,255,255,0.06); }
+
+  /* ---------- Missions view ---------- */
+  .missions {
+    position:fixed; inset:0; z-index:12;
+    display:none; flex-direction:column; align-items:center; padding:96px 24px 40px;
+    background:rgba(3,4,10,0.75); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    overflow-y:auto;
+  }
+  .missions.on { display:flex; }
+  .missions h1 { font-size:32px; font-weight:500; letter-spacing:-0.01em; margin-bottom:6px; }
+  .missions .subtitle {
+    font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.2em;
+    text-transform:uppercase; color:#7acbff; margin-bottom:36px;
+  }
+  .mission-grid {
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
+    gap:14px; width:min(900px, 92vw);
+  }
+  .mission-card {
+    background:rgba(10,12,22,0.6); border:1px solid rgba(255,255,255,0.08);
+    border-radius:14px; padding:18px; cursor:pointer;
+    transition:transform 0.2s, border-color 0.2s, background 0.2s;
+  }
+  .mission-card:hover { transform:translateY(-2px); border-color:rgba(122,203,255,0.4); background:rgba(122,203,255,0.05); }
+  .mission-card .subtitle { font-size:9px; margin-bottom:6px; }
+  .mission-card h3 { font-size:16px; font-weight:500; margin-bottom:8px; }
+  .mission-card p { font-size:12px; color:rgba(232,230,224,0.7); line-height:1.5; }
+  .mission-card .stars { margin-top:12px; font-family:'JetBrains Mono', monospace; font-size:14px; letter-spacing:2px; color:#a78bfa; }
+  .mission-card .stars .empty { color:rgba(232,230,224,0.2); }
+
+  /* Mission HUD (in-mission) */
+  .mission-hud {
+    position:fixed; top:80px; left:50%; transform:translateX(-50%); z-index:16;
+    background:rgba(10,12,22,0.6); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+    border:1px solid rgba(167,139,250,0.4); border-radius:12px; padding:14px 20px;
+    max-width:520px; text-align:center;
+    display:none;
+  }
+  .mission-hud.on { display:block; }
+  .mission-hud .subtitle {
+    font-family:'JetBrains Mono', monospace; font-size:9px; letter-spacing:0.2em;
+    text-transform:uppercase; color:#a78bfa; margin-bottom:4px;
+  }
+  .mission-hud h3 { font-size:15px; font-weight:500; margin-bottom:6px; }
+  .mission-hud p { font-size:12px; color:rgba(232,230,224,0.8); line-height:1.5; margin-bottom:8px; }
+  .mission-hud .goals { font-family:'JetBrains Mono', monospace; font-size:11px;
+                        color:rgba(232,230,224,0.7); text-align:left; display:inline-block; }
+  .mission-hud .goals .g { padding:2px 0; }
+  .mission-hud .goals .g.done { color:#7acbff; }
+  .mission-hud .goals .g.done::before { content:'✓ '; }
+  .mission-hud .goals .g:not(.done)::before { content:'○ '; color:rgba(232,230,224,0.4); }
+  .mission-hud .abort {
+    display:inline-block; margin-top:10px; padding:6px 12px; border-radius:6px; cursor:pointer;
+    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.15em;
+    text-transform:uppercase; color:rgba(232,230,224,0.7);
+  }
+  .mission-hud .abort:hover { color:#e8e6e0; background:rgba(255,255,255,0.08); }
+
+  /* Mission result modal */
+  .mission-result {
+    position:fixed; inset:0; z-index:50; display:none; align-items:center; justify-content:center;
+    background:rgba(3,4,10,0.8); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  }
+  .mission-result.on { display:flex; }
+  .mission-result .box {
+    background:rgba(10,12,22,0.9); border:1px solid rgba(167,139,250,0.5);
+    border-radius:16px; padding:36px 44px; text-align:center; max-width:440px;
+  }
+  .mission-result .subtitle {
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.2em;
+    text-transform:uppercase; color:#a78bfa; margin-bottom:6px;
+  }
+  .mission-result h2 { font-size:28px; font-weight:500; margin-bottom:10px; }
+  .mission-result .big-stars { font-size:48px; letter-spacing:8px; color:#7acbff; margin:16px 0; }
+  .mission-result .big-stars .empty { color:rgba(232,230,224,0.15); }
+  .mission-result .final-score {
+    font-family:'JetBrains Mono', monospace; font-size:24px; color:#7acbff; margin-bottom:20px;
+  }
+  .mission-result p { font-size:13px; color:rgba(232,230,224,0.75); line-height:1.55; margin-bottom:20px; }
+  .mission-result .actions { display:flex; gap:10px; justify-content:center; }
+  .mission-result button {
+    padding:10px 20px; border-radius:8px; border:1px solid rgba(255,255,255,0.15); cursor:pointer;
+    background:rgba(255,255,255,0.04); color:#e8e6e0;
+    font:500 12px/1 'Inter'; letter-spacing:0.1em; text-transform:uppercase;
+    transition:background 0.2s;
+  }
+  .mission-result button.primary { background:rgba(122,203,255,0.2); border-color:rgba(122,203,255,0.5); color:#7acbff; }
+  .mission-result button:hover { background:rgba(255,255,255,0.08); }
+  .mission-result button.primary:hover { background:rgba(122,203,255,0.3); }
+
+  /* ---------- Loader ---------- */
+  .loader {
+    position:fixed; inset:0; z-index:100; background:#03040a;
+    display:flex; align-items:center; justify-content:center; flex-direction:column; gap:20px;
+    transition:opacity 0.6s;
+  }
+  .loader.hidden { opacity:0; pointer-events:none; }
+  .loader .ring {
+    width:52px; height:52px; border:2px solid rgba(122,203,255,0.15);
+    border-top-color:#7acbff; border-radius:50%; animation:spin 1s linear infinite;
+  }
+  .loader .msg {
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.25em;
+    text-transform:uppercase; color:rgba(232,230,224,0.4);
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  /* ---------- Utility ---------- */
+  .badge {
+    position:fixed; z-index:8; pointer-events:none;
+    transform:translate(-50%, -100%);
+    padding:4px 8px; border-radius:6px;
+    font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.1em;
+    text-transform:uppercase; white-space:nowrap;
+    background:rgba(10,12,22,0.85); border:1px solid rgba(255,255,255,0.15); color:#e8e6e0;
+  }
+  .badge.hab   { border-color:#7acbff; color:#7acbff; }
+  .badge.hot   { border-color:#db8d2e; color:#db8d2e; }
+  .badge.lava  { border-color:#da3c19; color:#da3c19; }
+  .badge.cold  { border-color:#a78bfa; color:#a78bfa; }
+  .badge.frozen{ border-color:#5680e0; color:#5680e0; }
+
+  .flare-warning {
+    position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
+    padding:12px 24px; border-radius:8px; background:rgba(218,60,25,0.15);
+    border:1px solid rgba(218,60,25,0.5); color:#da3c19;
+    font:500 12px/1 'JetBrains Mono', monospace; letter-spacing:0.2em; text-transform:uppercase;
+    pointer-events:none; z-index:25; opacity:0; transition:opacity 0.3s;
+  }
+  .flare-warning.on { opacity:1; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<div class="topbar">
+  <button class="tab active" data-page="lab">Star Lab</button>
+  <button class="tab" data-page="missions">Missions</button>
+</div>
+
+<div class="score-badge" id="scoreBadge">
+  <span class="score-label">Score</span>
+  <span class="score-value" id="scoreValue">0</span>
+</div>
+
+<div class="star-picker" id="starPicker">
+  <button data-star="F">F-type</button>
+  <button data-star="G" class="active">G-type</button>
+  <button data-star="M">M-dwarf</button>
+</div>
+
+<div class="rail rail-left" id="planetRail">
+  <div class="rail-title">Planet Cards · Drag onto orbit</div>
+  <div id="planetList"></div>
+</div>
+
+<div class="rail rail-right" id="organismRail">
+  <div class="rail-title">Organism Cards · Drop on planet</div>
+  <div id="organismList"></div>
+</div>
+
+<div class="info-panel hidden" id="infoPanel"></div>
+
+<div class="toasts" id="toasts"></div>
+
+<div class="flare-warning" id="flareWarning">⚡ Stellar Flare</div>
+
+<div class="star-info" id="starInfo"></div>
+
+<!-- Missions listing -->
+<div class="missions" id="missionsView">
+  <h1>Missions</h1>
+  <div class="subtitle">Complete scenarios · Earn stars</div>
+  <div class="mission-grid" id="missionGrid"></div>
+</div>
+
+<!-- Mission HUD (during a mission) -->
+<div class="mission-hud" id="missionHud"></div>
+
+<!-- Mission result modal -->
+<div class="mission-result" id="missionResult"></div>
+
+<!-- Loader -->
+<div class="loader" id="loader">
+  <div class="ring"></div>
+  <div class="msg">Loading star system…</div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass }     from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass }from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass }     from 'three/addons/postprocessing/OutputPass.js';
+
+// ============================================================
+// DATA
+// ============================================================
+
+// Star profiles — realistic temperature, luminosity, colour
+const STARS = {
+  F: { key:'F', name:'F-type (hot, luminous)',   tempK:6500, lumSol:3.5,  color:0xf6f0d8, radiusSol:1.4, flareRate:0,  hazard:'High UV radiation reaches planetary surfaces' },
+  G: { key:'G', name:'G-type (Sun-like)',        tempK:5780, lumSol:1.0,  color:0xffe8b8, radiusSol:1.0, flareRate:0,  hazard:'Balanced conditions — Earth\'s host star' },
+  M: { key:'M', name:'M-dwarf (cool, common)',   tempK:3200, lumSol:0.03, color:0xff6a3a, radiusSol:0.4, flareRate:1.0,hazard:'Powerful flares · Habitable planets are tidally locked' },
+};
+
+// Kopparapu et al. 2013/2014 approximation for the Habitable Zone.
+// Returns AU boundaries for one of four flux-based limits.
+function seffCoeff(kind) {
+  // { A: constant, B: T, C: T^2 }  — T = T_star - 5780 K
+  const t = {
+    inner:  [1.107,  1.332e-4,  1.58e-8],
+    outer:  [0.356,  6.171e-5,  1.698e-9],
+    venus:  [1.766,  2.136e-4,  2.533e-8],
+    mars:   [0.320,  5.547e-5,  1.526e-9],
+  };
+  return t[kind];
+}
+function hzBoundaries(star) {
+  const T = star.tempK - 5780;
+  const out = {};
+  for (const k of ['inner','outer','venus','mars']) {
+    const [A, B, C] = seffCoeff(k);
+    const seff = A + B*T + C*T*T;
+    out[k] = Math.sqrt(star.lumSol / seff);
+  }
+  return out;   // .inner .outer .venus .mars in AU
+}
+
+// Planet cards — real-world exoplanets + solar-system references
+const PLANETS = [
+  { id:'earth',      name:'Earth (reference)', radiusEarth:1.00, massEarth:1.0,  density:5.51, actualAU:1.00, actualStar:'G',
+    desc:'Our benchmark. G-type star, 1 AU, rocky, liquid water.' },
+  { id:'venus',      name:'Venus (analog)',    radiusEarth:0.95, massEarth:0.82, density:5.24, actualAU:0.72, actualStar:'G',
+    desc:'Runaway greenhouse: 460 °C, 92 bar. Just inside the inner HZ edge.' },
+  { id:'mars',       name:'Mars (analog)',     radiusEarth:0.53, massEarth:0.11, density:3.93, actualAU:1.52, actualStar:'G',
+    desc:'Near the outer HZ edge. −55 °C average, atmosphere too thin.' },
+  { id:'trappist1e', name:'TRAPPIST-1e',       radiusEarth:0.92, massEarth:0.69, density:5.65, actualAU:0.029, actualStar:'M',
+    desc:'Rocky, ~Earth mass, sits in the middle of an M-dwarf\'s HZ. Likely tidally locked.' },
+  { id:'proximab',   name:'Proxima Centauri b',radiusEarth:1.12, massEarth:1.27, density:5.5,  actualAU:0.048, actualStar:'M',
+    desc:'Closest exoplanet to us. In its M-dwarf\'s HZ but hammered by flares (250× Earth\'s X-ray dose).' },
+  { id:'k218b',      name:'K2-18b',            radiusEarth:2.61, massEarth:8.6,  density:2.67, actualAU:0.14, actualStar:'M',
+    desc:'Super-Earth / mini-Neptune. Possible water-rich atmosphere; potential biosignature gases detected.' },
+  { id:'cnc55e',     name:'55 Cancri e',       radiusEarth:1.88, massEarth:8.6,  density:6.66, actualAU:0.0156,actualStar:'G',
+    desc:'Rocky but 65× closer to its star than Earth is to the Sun. Surface is molten lava.' },
+  { id:'kepler452b', name:'Kepler-452b',       radiusEarth:1.63, massEarth:5.0,  density:6.5,  actualAU:1.05, actualStar:'G',
+    desc:'"Earth\'s cousin." Slightly larger than Earth, comfortably in a G-star\'s HZ.' },
+  { id:'gj1214b',    name:'GJ 1214b',          radiusEarth:2.68, massEarth:6.55, density:1.87, actualAU:0.014,actualStar:'M',
+    desc:'Water world / mini-Neptune. Low density suggests thick H₂/He or steam atmosphere.' },
+];
+
+// Organisms — extremophiles + a mesophile control
+const ORGANISMS = [
+  { id:'mesophile',    name:'Mesophile (Earth life)', tempMin:0,    tempMax:45,  radiationTol:1,
+    desc:'Standard Earth biology. Comfortable at 0–45 °C, needs a magnetosphere.' },
+  { id:'thermophile',  name:'Thermophile',            tempMin:60,   tempMax:150, radiationTol:2,
+    desc:'Thrives in hot springs above 100 °C. Loves the inner HZ edge.' },
+  { id:'psychrophile', name:'Psychrophile',           tempMin:-40,  tempMax:15,  radiationTol:2,
+    desc:'Grows in subglacial ice at −20 °C. Great for outer HZ or tidal-lock night sides.' },
+  { id:'piezophile',   name:'Piezophile',             tempMin:-5,   tempMax:80,  radiationTol:2,
+    desc:'Adapted to extreme pressure — deep oceans, high-gravity worlds.' },
+  { id:'deinococcus',  name:'Deinococcus radiodurans',tempMin:-20,  tempMax:60,  radiationTol:5,
+    desc:'Survives radiation doses lethal to most life. Perfect for M-dwarf flare planets.' },
+];
+
+// Missions — hand-crafted scenarios
+const MISSIONS = [
+  {
+    id:'find-earth',
+    title:'Find the Earth Analog',
+    subtitle:'G-type star · Introductory',
+    star:'G',
+    intro:'A G-type star like our Sun. Place a planet in the Habitable Zone and drop the right Earth organism on it.',
+    goals:[
+      { id:'earth-in-hz',  text:'Place Earth in the Habitable Zone', check:(s)=>s.placed.some(p => p.id==='earth' && p.verdict==='habitable') },
+      { id:'life-on-earth',text:'Support life with a Mesophile',      check:(s)=>s.placed.some(p => p.id==='earth' && p.organism?.id==='mesophile' && p.survivalPct >= 80) },
+    ],
+    starTarget:2,
+  },
+  {
+    id:'colonize-proxima',
+    title:'Colonize Proxima b',
+    subtitle:'M-dwarf · Radiation challenge',
+    star:'M',
+    intro:'Proxima b orbits a flare-happy M-dwarf. Regular life will fry. Pick your organism carefully.',
+    goals:[
+      { id:'placed',   text:'Place Proxima b in the Habitable Zone', check:(s)=>s.placed.some(p => p.id==='proximab' && p.verdict==='habitable') },
+      { id:'flare',    text:'Survive at least one flare event',      check:(s)=>s.stats.flaresSurvived >= 1 },
+      { id:'organism', text:'Life still alive after the flare',      check:(s)=>s.placed.some(p => p.id==='proximab' && p.organism && p.survivalPct >= 60) },
+    ],
+    starTarget:3,
+  },
+  {
+    id:'diagnose-cnc',
+    title:'Diagnose 55 Cancri e',
+    subtitle:'G-type · Understand the failure',
+    star:'G',
+    intro:'55 Cnc e is famously uninhabitable. Place it — the verdict will tell you why.',
+    goals:[
+      { id:'placed', text:'Place 55 Cancri e near its real position (< 0.1 AU)', check:(s)=>s.placed.some(p => p.id==='cnc55e' && p.orbitAU < 0.1) },
+      { id:'verdict',text:'Read the "lava" verdict',                              check:(s)=>s.placed.some(p => p.id==='cnc55e' && p.verdict==='lava') },
+    ],
+    starTarget:2,
+  },
+  {
+    id:'trappist-1e',
+    title:'TRAPPIST-1e Habitability',
+    subtitle:'M-dwarf · Tidal-lock edge case',
+    star:'M',
+    intro:'A rocky planet in the middle of an M-dwarf\'s HZ. It\'s tidally locked — one side always day, one always night. Match an organism that survives.',
+    goals:[
+      { id:'placed', text:'Place TRAPPIST-1e in the Habitable Zone', check:(s)=>s.placed.some(p => p.id==='trappist1e' && p.verdict==='habitable') },
+      { id:'organism',text:'Deploy life with survival ≥ 70%',        check:(s)=>s.placed.some(p => p.id==='trappist1e' && p.organism && p.survivalPct >= 70) },
+    ],
+    starTarget:2,
+  },
+  {
+    id:'sort-planets',
+    title:'Sort by Habitability',
+    subtitle:'G-type · Place three, get the right verdicts',
+    star:'G',
+    intro:'Sort Venus, Earth, and Mars around a Sun-like star. Get the "hot", "habitable", "cold" verdicts.',
+    goals:[
+      { id:'v', text:'Place Venus (verdict: hot / lava)', check:(s)=>s.placed.some(p => p.id==='venus' && (p.verdict==='hot' || p.verdict==='lava')) },
+      { id:'e', text:'Place Earth (verdict: habitable)',  check:(s)=>s.placed.some(p => p.id==='earth' && p.verdict==='habitable') },
+      { id:'m', text:'Place Mars (verdict: cold / frozen)',check:(s)=>s.placed.some(p => p.id==='mars' && (p.verdict==='cold' || p.verdict==='frozen')) },
+    ],
+    starTarget:3,
+  },
+  {
+    id:'k218b',
+    title:'K2-18b Puzzle',
+    subtitle:'M-dwarf · Mini-Neptune biosignature',
+    star:'M',
+    intro:'K2-18b is a super-Earth / mini-Neptune with hints of life-related gases. Place it and identify the challenge.',
+    goals:[
+      { id:'placed', text:'Place K2-18b in the Habitable Zone', check:(s)=>s.placed.some(p => p.id==='k218b' && p.verdict==='habitable') },
+      { id:'noRocky',text:'Notice its mini-Neptune status (density < 3.0)', check:(s)=>s.placed.some(p => p.id==='k218b' && p.density < 3.0) },
+    ],
+    starTarget:2,
+  },
+  {
+    id:'f-star-uv',
+    title:'Life Around an F-star',
+    subtitle:'F-type · UV challenge',
+    star:'F',
+    intro:'F-stars are hotter and wider-HZ, but blast UV radiation. Place Kepler-452b and match an organism that can take it.',
+    goals:[
+      { id:'placed',   text:'Place Kepler-452b in the Habitable Zone', check:(s)=>s.placed.some(p => p.id==='kepler452b' && p.verdict==='habitable') },
+      { id:'organism', text:'Match a radiation-tolerant organism',      check:(s)=>s.placed.some(p => p.id==='kepler452b' && p.organism && p.organism.radiationTol >= 2 && p.survivalPct >= 70) },
+    ],
+    starTarget:2,
+  },
+  {
+    id:'transit',
+    title:'Transit Hunter',
+    subtitle:'Any star · Read the lightcurve',
+    star:'M',
+    intro:'The M-star advantage: small stars mean deeper transit dips. Place three planets and watch the lightcurve at the bottom — deeper dips = larger planets relative to the star.',
+    goals:[
+      { id:'placed3', text:'Place at least 3 planets', check:(s)=>s.placed.length >= 3 },
+      { id:'anyHab',  text:'At least one is habitable',check:(s)=>s.placed.some(p => p.verdict==='habitable') },
+    ],
+    starTarget:2,
+  },
+];
+
+// ============================================================
+// THREE.JS SCENE
+// ============================================================
+const app = document.getElementById('app');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x03040a);
+
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 500);
+camera.position.set(0, 14, 22);
+camera.lookAt(0, 0, 0);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true, powerPreference:'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.85;
+app.appendChild(renderer.domElement);
+
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.55, 0.6, 0.55);
+composer.addPass(bloom);
+composer.addPass(new OutputPass());
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor = 0.05;
+controls.minDistance = 4; controls.maxDistance = 80;
+
+// Background starfield — sparse
+function buildStarfield() {
+  const N = 3000;
+  const geom = new THREE.BufferGeometry();
+  const pos = new Float32Array(N * 3);
+  const col = new Float32Array(N * 3);
+  for (let i = 0; i < N; i++) {
+    const u = Math.random(), v = Math.random();
+    const t = 2*Math.PI*u, p = Math.acos(2*v - 1);
+    const R = 300;
+    pos[i*3]   = R * Math.sin(p) * Math.cos(t);
+    pos[i*3+1] = R * Math.sin(p) * Math.sin(t);
+    pos[i*3+2] = R * Math.cos(p);
+    const dim = 0.3 + Math.random() * 0.7;
+    col[i*3]=dim; col[i*3+1]=dim; col[i*3+2]=dim;
+  }
+  geom.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geom.setAttribute('color',    new THREE.BufferAttribute(col, 3));
+  const mat = new THREE.PointsMaterial({ size:1.2, sizeAttenuation:false, vertexColors:true, transparent:true, opacity:0.85 });
+  return new THREE.Points(geom, mat);
+}
+scene.add(buildStarfield());
+
+// ============================================================
+// STAR SYSTEM (rebuilt when star type changes)
+// ============================================================
+let currentStar    = STARS.G;
+let auScale        = 6;              // world units per AU (recomputed per star)
+let starGroup      = null;
+let hzMesh         = null;
+let orbitGuides    = [];
+let starLight      = null;
+let placedPlanets  = [];             // active placed planets in the scene
+
+// Compute AU→world scale so the HZ centre sits at a comfortable radius
+function computeScale(bounds) {
+  const centre = (bounds.inner + bounds.outer) / 2;
+  return 6.5 / centre;                  // HZ centre → 6.5 world units
+}
+
+function makeStarTexture(hexColor) {
+  const s = 256;
+  const c = document.createElement('canvas'); c.width = c.height = s;
+  const ctx = c.getContext('2d');
+  const [r, g, b] = [(hexColor>>16)&255, (hexColor>>8)&255, hexColor&255];
+  const g1 = ctx.createRadialGradient(s/2, s/2, 0, s/2, s/2, s/2);
+  g1.addColorStop(0.0, `rgba(255,255,255,1)`);
+  g1.addColorStop(0.15, `rgba(${r},${g},${b},1)`);
+  g1.addColorStop(0.55, `rgba(${r},${g},${b},0.25)`);
+  g1.addColorStop(1.0, `rgba(${r},${g},${b},0)`);
+  ctx.fillStyle = g1; ctx.fillRect(0, 0, s, s);
+  return new THREE.CanvasTexture(c);
+}
+
+function buildStar(star) {
+  const grp = new THREE.Group();
+  // Core sphere — sized visually, not physically (star radii are microscopic vs AU)
+  const visRadius = 0.75 + (star.tempK - 3000) / 6000;   // ~0.75 M → ~1.4 F
+  const sphere = new THREE.Mesh(
+    new THREE.SphereGeometry(visRadius, 40, 40),
+    new THREE.MeshBasicMaterial({ color: star.color })
+  );
+  grp.add(sphere);
+  // Corona sprites (three layers for a real glow)
+  const tex = makeStarTexture(star.color);
+  for (const [scale, opa] of [[visRadius*3, 1.0], [visRadius*6, 0.55], [visRadius*11, 0.28]]) {
+    const s = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: tex, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, opacity: opa
+    }));
+    s.scale.setScalar(scale);
+    grp.add(s);
+  }
+  return grp;
+}
+
+function buildHZ(bounds) {
+  // Translucent green annulus + soft glow ring at the two edges
+  const inner = bounds.inner * auScale;
+  const outer = bounds.outer * auScale;
+  const grp = new THREE.Group();
+  // Filled annulus (thin torus so it lies in the disk plane)
+  const ringGeom = new THREE.RingGeometry(inner, outer, 128);
+  const ringMat  = new THREE.MeshBasicMaterial({
+    color: 0x2ea86d, side: THREE.DoubleSide, transparent: true, opacity: 0.16, depthWrite: false
+  });
+  const ring = new THREE.Mesh(ringGeom, ringMat);
+  ring.rotation.x = -Math.PI / 2;
+  grp.add(ring);
+  // Edge outlines
+  for (const r of [inner, outer]) {
+    const pts = [];
+    for (let i = 0; i <= 200; i++) {
+      const t = (i / 200) * Math.PI * 2;
+      pts.push(new THREE.Vector3(Math.cos(t) * r, 0, Math.sin(t) * r));
+    }
+    const g = new THREE.BufferGeometry().setFromPoints(pts);
+    const m = new THREE.LineBasicMaterial({ color: 0x2ea86d, transparent:true, opacity:0.7 });
+    grp.add(new THREE.LineLoop(g, m));
+  }
+  // Empirical edges (dashed feel via low opacity)
+  for (const r of [bounds.venus * auScale, bounds.mars * auScale]) {
+    const pts = [];
+    for (let i = 0; i <= 200; i++) {
+      const t = (i / 200) * Math.PI * 2;
+      pts.push(new THREE.Vector3(Math.cos(t) * r, 0, Math.sin(t) * r));
+    }
+    const g = new THREE.BufferGeometry().setFromPoints(pts);
+    const m = new THREE.LineBasicMaterial({ color: 0x7acbff, transparent:true, opacity:0.22 });
+    grp.add(new THREE.LineLoop(g, m));
+  }
+  return grp;
+}
+
+function buildOrbitGuides() {
+  // A few concentric guide circles at powers of 2 in the compressed scale, subtle
+  const arr = [];
+  const maxR = 24;
+  for (let step = 3; step <= maxR; step += 3) {
+    const pts = [];
+    for (let i = 0; i <= 128; i++) {
+      const t = (i / 128) * Math.PI * 2;
+      pts.push(new THREE.Vector3(Math.cos(t) * step, 0, Math.sin(t) * step));
+    }
+    const g = new THREE.BufferGeometry().setFromPoints(pts);
+    const m = new THREE.LineBasicMaterial({ color:0x2a3552, transparent:true, opacity:0.14 });
+    const line = new THREE.LineLoop(g, m);
+    scene.add(line); arr.push(line);
+  }
+  return arr;
+}
+
+function rebuildStarSystem(starKey) {
+  // Clear old
+  if (starGroup)  { scene.remove(starGroup); starGroup.traverse(o => { o.material?.dispose?.(); o.geometry?.dispose?.(); }); }
+  if (hzMesh)     { scene.remove(hzMesh);    hzMesh.traverse(o => { o.material?.dispose?.(); o.geometry?.dispose?.(); }); }
+  for (const g of orbitGuides) scene.remove(g);
+  orbitGuides = [];
+  clearPlacedPlanets();
+
+  currentStar = STARS[starKey];
+  const bounds = hzBoundaries(currentStar);
+  auScale = computeScale(bounds);
+
+  starGroup = buildStar(currentStar);
+  scene.add(starGroup);
+  hzMesh = buildHZ(bounds);
+  scene.add(hzMesh);
+  orbitGuides = buildOrbitGuides();
+
+  if (!starLight) { starLight = new THREE.PointLight(0xffffff, 1.2, 0, 0); scene.add(starLight); }
+  starLight.color.setHex(currentStar.color);
+
+  // Update DOM
+  document.querySelectorAll('#starPicker button').forEach(b => b.classList.toggle('active', b.dataset.star === starKey));
+  updatePlanetCardsForStar();
+  renderStarInfo();
+}
+
+// ============================================================
+// PLANETS (placed by drag-drop)
+// ============================================================
+function planetColor(p) {
+  // Pick a colour heuristically
+  if (p.id === 'earth')      return 0x4e8fd6;
+  if (p.id === 'venus')      return 0xd6b98a;
+  if (p.id === 'mars')       return 0xc4643a;
+  if (p.id === 'trappist1e') return 0x8fb9a3;
+  if (p.id === 'proximab')   return 0xa76a4c;
+  if (p.id === 'k218b')      return 0x6db0d6;
+  if (p.id === 'cnc55e')     return 0xff5a3a;
+  if (p.id === 'kepler452b') return 0x6bc38a;
+  if (p.id === 'gj1214b')    return 0x7590d6;
+  return 0xcccccc;
+}
+
+function verdictFor(orbitAU, bounds, planetDensity) {
+  // Verdict based on position vs HZ boundaries
+  // + note gaseous planets (density < 3) are not habitable regardless
+  if (orbitAU < bounds.venus) return 'lava';
+  if (orbitAU < bounds.inner) return 'hot';
+  if (orbitAU > bounds.mars)  return 'frozen';
+  if (orbitAU > bounds.outer) return 'cold';
+  if (planetDensity && planetDensity < 3.0) return 'gaseous';
+  return 'habitable';
+}
+
+function verdictBadge(v) {
+  return { hab:'HABITABLE', hot:'HOT · Runaway greenhouse', lava:'LAVA · Super-Venus',
+           cold:'COLD · Cooling', frozen:'FROZEN · Beyond max greenhouse',
+           gaseous:'MINI-NEPTUNE · No surface',
+           habitable:'HABITABLE · Liquid water possible' }[v] || v.toUpperCase();
+}
+
+function estimateTempC(orbitAU, bounds) {
+  // Very rough — 15 °C at Earth's mid-HZ position, scale ~1/sqrt(distance)
+  const mid = (bounds.inner + bounds.outer) / 2;
+  const ratio = mid / orbitAU;
+  // At HZ midpoint → ~15 °C; use S_eff ratio
+  const T = 15 + (ratio*ratio - 1) * 120;
+  return T;
+}
+
+function placePlanet(planetSpec, worldPos) {
+  const bounds = hzBoundaries(currentStar);
+  const dist = Math.hypot(worldPos.x, worldPos.z);
+  const orbitAU = dist / auScale;
+  const verdict = verdictFor(orbitAU, bounds, planetSpec.density);
+  const tempC = estimateTempC(orbitAU, bounds);
+
+  // Visual sphere
+  const visRadius = Math.min(0.5, 0.12 + planetSpec.radiusEarth * 0.08);
+  const mesh = new THREE.Mesh(
+    new THREE.SphereGeometry(visRadius, 24, 24),
+    new THREE.MeshLambertMaterial({ color: planetColor(planetSpec) })
+  );
+  const angle = Math.atan2(worldPos.z, worldPos.x);
+  mesh.position.set(Math.cos(angle) * dist, 0, Math.sin(angle) * dist);
+  scene.add(mesh);
+
+  // Orbit line
+  const pts = [];
+  for (let i = 0; i <= 128; i++) {
+    const t = (i / 128) * Math.PI * 2;
+    pts.push(new THREE.Vector3(Math.cos(t) * dist, 0, Math.sin(t) * dist));
+  }
+  const orbitLine = new THREE.LineLoop(
+    new THREE.BufferGeometry().setFromPoints(pts),
+    new THREE.LineBasicMaterial({ color:0x5a76b8, transparent:true, opacity:0.35 })
+  );
+  scene.add(orbitLine);
+
+  // Angular speed (very slow — planets read as almost stationary so the scene feels observational,
+  // not game-y, and organism-drop targets are easy to hit).
+  const speed = 0.028 / Math.pow(Math.max(0.05, orbitAU), 1.3);
+
+  const placed = {
+    id: planetSpec.id, name: planetSpec.name,
+    radiusEarth: planetSpec.radiusEarth, massEarth: planetSpec.massEarth, density: planetSpec.density,
+    orbitAU, verdict, tempC,
+    mesh, orbitLine, visRadius,
+    angle, speed, distWorld: dist,
+    organism: null, survivalPct: 0,
+    badgeEl: null,
+    labelWorldPos: new THREE.Vector3(),
+  };
+  placedPlanets.push(placed);
+  // Verdict badge (DOM overlay)
+  placed.badgeEl = document.createElement('div');
+  placed.badgeEl.className = `badge ${verdict === 'habitable' ? 'hab' : verdict}`;
+  placed.badgeEl.textContent = verdictBadge(verdict).split(' · ')[0];
+  document.body.appendChild(placed.badgeEl);
+
+  // Informative report — facts first, scoring is silent in the sandbox
+  const isHZ = (verdict === 'habitable');
+  const isCloseToRealPos =
+    planetSpec.actualStar === currentStar.key &&
+    Math.abs(planetSpec.actualAU - orbitAU) / planetSpec.actualAU < 0.4;
+  let delta = 0;
+  if (isHZ)              delta += 100;
+  if (isCloseToRealPos)  delta += 50;
+  if (verdict === 'lava' || verdict === 'frozen') delta -= 30;
+  addScore(delta);
+
+  // Build a factual body: what happened, why, and one contextual note.
+  const lines = [];
+  lines.push(`Orbit: ${orbitAU.toFixed(3)} AU · Est. surface temp: ${tempC.toFixed(0)} °C`);
+  if (verdict === 'lava')      lines.push(`Below the recent-Venus limit (${bounds.venus.toFixed(2)} AU). Water lost to space; molten surface.`);
+  else if (verdict === 'hot')  lines.push(`Between recent Venus and the inner HZ edge. Runaway greenhouse likely.`);
+  else if (verdict === 'cold') lines.push(`Between the outer HZ edge and early Mars. Water freezes; thin atmosphere.`);
+  else if (verdict === 'frozen') lines.push(`Beyond the maximum-greenhouse limit (${bounds.mars.toFixed(2)} AU). CO₂ condenses into clouds.`);
+  else if (verdict === 'gaseous') lines.push(`Density ${planetSpec.density} g/cm³ — likely a mini-Neptune. No solid surface for surface life.`);
+  else if (verdict === 'habitable') lines.push(`Within the HZ (${bounds.inner.toFixed(2)}–${bounds.outer.toFixed(2)} AU). Liquid water is possible.`);
+  if (isCloseToRealPos) lines.push(`Near this planet's real orbit around its actual host star.`);
+  toast(
+    isHZ ? 'good' : (verdict === 'gaseous' ? 'info' : 'bad'),
+    `${planetSpec.name} · ${verdictBadge(verdict).split(' · ')[0]}`,
+    lines.join('\n')
+  );
+
+  // Selection info
+  showInfoForPlaced(placed);
+  updatePlanetCardsForStar();
+  onGameStateChange();
+  return placed;
+}
+
+function clearPlacedPlanets() {
+  for (const p of placedPlanets) {
+    scene.remove(p.mesh); scene.remove(p.orbitLine);
+    p.mesh.geometry.dispose(); p.mesh.material.dispose();
+    p.orbitLine.geometry.dispose(); p.orbitLine.material.dispose();
+    if (p.badgeEl) p.badgeEl.remove();
+  }
+  placedPlanets.length = 0;
+}
+
+function removePlanet(placed) {
+  scene.remove(placed.mesh); scene.remove(placed.orbitLine);
+  placed.mesh.geometry.dispose(); placed.mesh.material.dispose();
+  placed.orbitLine.geometry.dispose(); placed.orbitLine.material.dispose();
+  if (placed.badgeEl) placed.badgeEl.remove();
+  placedPlanets = placedPlanets.filter(p => p !== placed);
+}
+
+// ============================================================
+// DRAG-DROP
+// ============================================================
+let dragging = null;              // { type:'planet'|'organism', spec, ghost }
+
+function startDrag(type, spec, evt) {
+  const ghost = document.createElement('div');
+  ghost.className = 'drag-ghost';
+  ghost.textContent = spec.name;
+  ghost.style.left = evt.clientX + 'px';
+  ghost.style.top  = evt.clientY + 'px';
+  document.body.appendChild(ghost);
+  dragging = { type, spec, ghost };
+  document.body.style.cursor = 'grabbing';
+}
+window.addEventListener('mousemove', (e) => {
+  if (!dragging) return;
+  dragging.ghost.style.left = e.clientX + 'px';
+  dragging.ghost.style.top  = e.clientY + 'px';
+});
+window.addEventListener('mouseup', (e) => {
+  if (!dragging) return;
+  dragging.ghost.remove();
+  const target = e.target;
+  const canvasHit = target && target.tagName === 'CANVAS';
+  if (dragging.type === 'planet' && canvasHit) {
+    // Raycast onto the y=0 plane
+    const pos = raycastPlane(e.clientX, e.clientY);
+    if (pos) placePlanet(dragging.spec, pos);
+  } else if (dragging.type === 'organism' && canvasHit) {
+    // Find nearest placed planet under cursor
+    const hit = raycastPlanet(e.clientX, e.clientY);
+    if (hit) applyOrganism(hit, dragging.spec);
+    else toast('info', 'Drop on a planet', 'Drop this organism onto one of the placed planets to test survival.');
+  }
+  document.body.style.cursor = '';
+  dragging = null;
+});
+
+function raycastPlane(x, y) {
+  const ndc = new THREE.Vector2(
+    (x / window.innerWidth) * 2 - 1,
+    -(y / window.innerHeight) * 2 + 1
+  );
+  const rc = new THREE.Raycaster();
+  rc.setFromCamera(ndc, camera);
+  // Plane y = 0
+  const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+  const pt = new THREE.Vector3();
+  rc.ray.intersectPlane(plane, pt);
+  return pt;
+}
+function raycastPlanet(x, y) {
+  if (placedPlanets.length === 0) return null;
+  const ndc = new THREE.Vector2(
+    (x / window.innerWidth) * 2 - 1,
+    -(y / window.innerHeight) * 2 + 1
+  );
+  const rc = new THREE.Raycaster();
+  rc.setFromCamera(ndc, camera);
+  const hits = rc.intersectObjects(placedPlanets.map(p => p.mesh), false);
+  if (hits.length === 0) return null;
+  const hitMesh = hits[0].object;
+  return placedPlanets.find(p => p.mesh === hitMesh);
+}
+
+// ============================================================
+// ORGANISMS
+// ============================================================
+function applyOrganism(placed, org) {
+  const tempOK = (placed.tempC >= org.tempMin && placed.tempC <= org.tempMax);
+  const radHazard = (currentStar.key === 'M') ? 4 : (currentStar.key === 'F' ? 3 : 1);
+  const radOK = org.radiationTol >= radHazard;
+  const gaseousProblem = placed.density < 3.0;
+  // Survival percentage
+  let pct = 50;
+  if (tempOK) pct += 30; else {
+    const outside = Math.min(Math.abs(placed.tempC - org.tempMin), Math.abs(placed.tempC - org.tempMax));
+    pct -= Math.min(45, outside * 0.8);
+  }
+  if (radOK) pct += 20; else pct -= 30;
+  if (gaseousProblem) pct -= 25;
+  pct = Math.max(0, Math.min(100, Math.round(pct)));
+
+  placed.organism = org;
+  placed.survivalPct = pct;
+
+  const delta = pct >= 80 ? 200 : pct >= 60 ? 100 : pct >= 40 ? 30 : -50;
+  addScore(delta);
+  const kind = pct >= 60 ? 'good' : 'bad';
+  const lines = [];
+  lines.push(`Estimated survival: ${pct}%. Planet surface ≈ ${placed.tempC.toFixed(0)} °C.`);
+  if (!tempOK) lines.push(`Temperature outside this organism's viable range (${org.tempMin} to ${org.tempMax} °C).`);
+  if (!radOK) lines.push(`This star's radiation environment exceeds the organism's tolerance (${org.radiationTol}/5).`);
+  if (gaseousProblem) lines.push(`No solid surface — surface-adapted life cannot take hold on a mini-Neptune.`);
+  if (tempOK && radOK && !gaseousProblem) lines.push(`Conditions match this organism's biology — habitat viable.`);
+  toast(kind, `${org.name} on ${placed.name}`, lines.join('\n'));
+  showInfoForPlaced(placed);
+  onGameStateChange();
+}
+
+// ============================================================
+// FLARES (M-dwarf)
+// ============================================================
+let flareTimer = 0;
+let flareActive = false;
+let flareIntensity = 0;
+const flareWarnEl = document.getElementById('flareWarning');
+
+function tickFlares(dt) {
+  if (currentStar.key !== 'M') { flareActive = false; flareIntensity = 0; flareWarnEl.classList.remove('on'); return; }
+  if (flareActive) {
+    flareIntensity -= dt * 1.5;
+    if (flareIntensity <= 0) { flareActive = false; flareIntensity = 0; flareWarnEl.classList.remove('on'); }
+    // Visual: pulse star sphere brightness (bloom exposure)
+    if (starGroup) starGroup.children[0].material.color.setHex(0xffffff);
+    return;
+  }
+  flareTimer += dt;
+  if (flareTimer > 9 + Math.random() * 6) {
+    flareTimer = 0;
+    flareActive = true;
+    flareIntensity = 1.0;
+    flareWarnEl.classList.add('on');
+    // Damage placed planets
+    for (const p of placedPlanets) {
+      if (!p.organism) continue;
+      const tol = p.organism.radiationTol;
+      if (tol >= 4) {
+        p.survivalPct = Math.min(100, p.survivalPct + 5);
+        toast('good', `Flare on ${p.name}`, `${p.organism.name} weathered the burst. Radiation tolerance ${tol}/5 was sufficient.`);
+        addScore(40);
+        gameStats.flaresSurvived++;
+      } else {
+        const dmg = (4 - tol) * 20;
+        p.survivalPct = Math.max(0, p.survivalPct - dmg);
+        toast('bad', `Flare on ${p.name}`, `${p.organism.name} lost ${dmg}% of its population. Radiation tolerance ${tol}/5 is too low for an M-dwarf.`);
+        addScore(-dmg);
+      }
+      showInfoForPlaced(p);
+    }
+    if (!placedPlanets.some(p => p.organism)) {
+      toast('info', 'Stellar flare!', 'The M-dwarf just erupted. Drop a radiation-tolerant organism onto a planet to see what happens.');
+    }
+    onGameStateChange();
+  }
+}
+
+// After flare: restore star colour after ~0.4s
+function restoreStarColour() {
+  if (!flareActive && starGroup) starGroup.children[0].material.color.setHex(currentStar.color);
+}
+
+// ============================================================
+// STAR INFO PANEL (bottom-left, factual readout)
+// ============================================================
+const starInfoEl = document.getElementById('starInfo');
+function renderStarInfo() {
+  const s = currentStar;
+  const b = hzBoundaries(s);
+  starInfoEl.innerHTML = `
+    <div class="subtitle">Host Star</div>
+    <h3>${s.name}</h3>
+    <div class="row"><span class="k">Effective temp</span><span class="v">${s.tempK.toLocaleString()} K</span></div>
+    <div class="row"><span class="k">Luminosity</span><span class="v">${s.lumSol} L⊙</span></div>
+    <div class="row"><span class="k">Radius</span><span class="v">${s.radiusSol} R⊙</span></div>
+    <div class="row"><span class="k">HZ inner (runaway greenhouse)</span><span class="v">${b.inner.toFixed(3)} AU</span></div>
+    <div class="row"><span class="k">HZ outer (max greenhouse)</span><span class="v">${b.outer.toFixed(3)} AU</span></div>
+    <div class="row"><span class="k">Recent Venus limit</span><span class="v">${b.venus.toFixed(3)} AU</span></div>
+    <div class="row"><span class="k">Early Mars limit</span><span class="v">${b.mars.toFixed(3)} AU</span></div>
+    <div class="note">${s.hazard}</div>
+  `;
+}
+
+// ============================================================
+// SIDE-RAIL CARDS
+// ============================================================
+const planetList  = document.getElementById('planetList');
+const organismList= document.getElementById('organismList');
+
+function updatePlanetCardsForStar() {
+  planetList.innerHTML = '';
+  for (const p of PLANETS) {
+    const el = document.createElement('div');
+    el.className = 'card card-planet';
+    el.dataset.id = p.id;
+    el.innerHTML = `
+      <div class="card-title">${p.name}</div>
+      <div class="card-sub">${p.radiusEarth} R⊕ · ${p.density} g/cm³</div>
+      <div class="card-stats">
+        <span class="card-stat">Real star <b>${p.actualStar}</b></span>
+        <span class="card-stat">Real orbit <b>${p.actualAU} AU</b></span>
+      </div>`;
+    el.addEventListener('mousedown', (e) => { e.preventDefault(); startDrag('planet', p, e); });
+    planetList.appendChild(el);
+  }
+}
+function buildOrganismCards() {
+  organismList.innerHTML = '';
+  for (const o of ORGANISMS) {
+    const el = document.createElement('div');
+    el.className = 'card card-org';
+    el.dataset.id = o.id;
+    el.innerHTML = `
+      <div class="card-title">${o.name}</div>
+      <div class="card-sub">${o.tempMin}°C to ${o.tempMax}°C · Rad ${o.radiationTol}/5</div>
+      <div class="card-stats">
+        <span class="card-stat">${o.desc}</span>
+      </div>`;
+    el.addEventListener('mousedown', (e) => { e.preventDefault(); startDrag('organism', o, e); });
+    organismList.appendChild(el);
+  }
+}
+buildOrganismCards();
+
+// ============================================================
+// INFO PANEL
+// ============================================================
+const infoPanel = document.getElementById('infoPanel');
+function showInfoForPlaced(p) {
+  const org = p.organism;
+  infoPanel.classList.remove('hidden');
+  infoPanel.innerHTML = `
+    <div class="subtitle">${p.verdict === 'habitable' ? 'Habitable candidate' : verdictBadge(p.verdict).split(' · ')[0]}</div>
+    <h2>${p.name}</h2>
+    <p>${(PLANETS.find(x => x.id === p.id) || {}).desc || ''}</p>
+    <div class="stats">
+      <span class="k">Orbit</span><span class="v">${p.orbitAU.toFixed(3)} AU</span>
+      <span class="k">Verdict</span><span class="v">${verdictBadge(p.verdict).split(' · ')[0]}</span>
+      <span class="k">Est. temp</span><span class="v">${p.tempC.toFixed(0)} °C</span>
+      <span class="k">Radius</span><span class="v">${p.radiusEarth} R⊕</span>
+      <span class="k">Density</span><span class="v">${p.density} g/cm³</span>
+      <span class="k">Mass</span><span class="v">${p.massEarth} M⊕</span>
+      ${org ? `
+        <span class="k">Organism</span><span class="v" style="color:#a78bfa">${org.name}</span>
+        <span class="k">Survival</span><span class="v">${p.survivalPct}%</span>
+      ` : `
+        <span class="k">Life</span><span class="v" style="color:rgba(232,230,224,0.4)">— drop organism —</span>
+      `}
+    </div>
+    <div style="margin-top:14px; display:flex; gap:8px;">
+      <button class="tab" style="padding:6px 12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:6px;" id="removeBtn">Remove</button>
+    </div>
+  `;
+  const removeBtn = document.getElementById('removeBtn');
+  removeBtn.onclick = () => { removePlanet(p); infoPanel.classList.add('hidden'); onGameStateChange(); };
+}
+function hideInfo() { infoPanel.classList.add('hidden'); }
+
+// Click on canvas — if on a planet, show its info; if empty, hide
+renderer.domElement.addEventListener('click', (e) => {
+  const hit = raycastPlanet(e.clientX, e.clientY);
+  if (hit) showInfoForPlaced(hit);
+  else hideInfo();
+});
+
+// ============================================================
+// TOASTS + SCORE
+// ============================================================
+const toastEl = document.getElementById('toasts');
+function toast(kind, title, body, score) {
+  const t = document.createElement('div');
+  t.className = `toast ${kind}`;
+  const scoreHtml = score !== undefined && score !== 0
+    ? `<span class="toast-score ${score < 0 ? 'neg' : ''}">${score > 0 ? '+' : ''}${score}</span>` : '';
+  t.innerHTML = `${scoreHtml}<div class="toast-title">${title}</div><div class="toast-body">${(body||'').replace(/\n/g, '<br>')}</div>`;
+  toastEl.appendChild(t);
+  setTimeout(() => { t.style.animation = 'toastOut 0.35s forwards'; setTimeout(() => t.remove(), 400); }, 5000);
+}
+let score = 0;
+const scoreEl = document.getElementById('scoreValue');
+function addScore(n) { score += n; scoreEl.textContent = score; }
+
+// ============================================================
+// MISSION ENGINE
+// ============================================================
+const missionsView = document.getElementById('missionsView');
+const missionHud   = document.getElementById('missionHud');
+const missionResult= document.getElementById('missionResult');
+const missionGrid  = document.getElementById('missionGrid');
+const missionStars = {};   // id → 0-3 stars earned
+
+let activeMission = null;
+let gameStats = { flaresSurvived: 0 };
+
+function renderMissionGrid() {
+  missionGrid.innerHTML = '';
+  for (const m of MISSIONS) {
+    const el = document.createElement('div');
+    el.className = 'mission-card';
+    const earned = missionStars[m.id] || 0;
+    let stars = '';
+    for (let i = 0; i < 3; i++) stars += i < earned ? '★' : '<span class="empty">☆</span>';
+    el.innerHTML = `
+      <div class="subtitle">${m.subtitle}</div>
+      <h3>${m.title}</h3>
+      <p>${m.intro}</p>
+      <div class="stars">${stars}</div>
+    `;
+    el.addEventListener('click', () => startMission(m));
+    missionGrid.appendChild(el);
+  }
+}
+renderMissionGrid();
+
+function startMission(m) {
+  activeMission = m;
+  gameStats = { flaresSurvived: 0 };
+  score = 0; scoreEl.textContent = 0;
+  // Switch mode → back to lab view with mission HUD
+  setPage('lab');
+  document.getElementById('scoreBadge').classList.add('on');   // score visible during missions
+  rebuildStarSystem(m.star);
+  renderMissionHud();
+  toast('info', m.title, m.intro);
+}
+function _hideScore() { document.getElementById('scoreBadge').classList.remove('on'); }
+function abortMission() {
+  activeMission = null;
+  missionHud.classList.remove('on');
+}
+function renderMissionHud() {
+  if (!activeMission) { missionHud.classList.remove('on'); return; }
+  const state = { placed: placedPlanets, stats: gameStats };
+  const goals = activeMission.goals.map(g => {
+    const done = g.check(state);
+    return `<div class="g ${done ? 'done' : ''}">${g.text}</div>`;
+  }).join('');
+  missionHud.innerHTML = `
+    <div class="subtitle">Mission</div>
+    <h3>${activeMission.title}</h3>
+    <p>${activeMission.intro}</p>
+    <div class="goals">${goals}</div>
+    <div><button class="abort" id="abortBtn">Abort mission</button></div>
+  `;
+  missionHud.classList.add('on');
+  document.getElementById('abortBtn').onclick = abortMission;
+  // Check completion
+  const allDone = activeMission.goals.every(g => g.check(state));
+  if (allDone) finishMission();
+}
+function finishMission() {
+  const m = activeMission;
+  const goalCount = m.goals.length;
+  // Score → stars: 1 for base completion, +1 per bonus (score threshold), max 3
+  let earned = 1;
+  if (score >= 250) earned = 2;
+  if (score >= 500) earned = 3;
+  earned = Math.min(3, Math.max(1, earned));
+  missionStars[m.id] = Math.max(missionStars[m.id] || 0, earned);
+  let starsHtml = '';
+  for (let i = 0; i < 3; i++) starsHtml += i < earned ? '★' : '<span class="empty">☆</span>';
+  missionResult.innerHTML = `
+    <div class="box">
+      <div class="subtitle">Mission complete</div>
+      <h2>${m.title}</h2>
+      <div class="big-stars">${starsHtml}</div>
+      <div class="final-score">${score}</div>
+      <p>${earned === 3 ? 'Perfect run.' : earned === 2 ? 'Solid — try to boost your score for the last star.' : 'Completed. Replay for a higher score to unlock more stars.'}</p>
+      <div class="actions">
+        <button id="mrReplay">Replay</button>
+        <button id="mrMissions" class="primary">Missions</button>
+      </div>
+    </div>
+  `;
+  missionResult.classList.add('on');
+  document.getElementById('mrReplay').onclick = () => { missionResult.classList.remove('on'); startMission(m); };
+  document.getElementById('mrMissions').onclick = () => {
+    missionResult.classList.remove('on');
+    activeMission = null; missionHud.classList.remove('on');
+    setPage('missions');
+    renderMissionGrid();
+  };
+}
+function onGameStateChange() { if (activeMission) renderMissionHud(); }
+
+// ============================================================
+// PAGES
+// ============================================================
+let currentPage = 'lab';
+function setPage(name) {
+  currentPage = name;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.page === name));
+  const isLab = (name === 'lab');
+  missionsView.classList.toggle('on', !isLab);
+  document.getElementById('starPicker').style.display     = isLab ? 'flex' : 'none';
+  document.getElementById('planetRail').style.display     = isLab ? 'block' : 'none';
+  document.getElementById('organismRail').style.display   = isLab ? 'block' : 'none';
+  document.getElementById('starInfo').style.display       = isLab ? 'block' : 'none';
+  // Score badge shown only while a mission is running
+  document.getElementById('scoreBadge').classList.toggle('on', isLab && !!activeMission);
+  if (!isLab) { infoPanel.classList.add('hidden'); missionHud.classList.remove('on'); }
+}
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => setPage(t.dataset.page)));
+
+// Star picker
+document.querySelectorAll('#starPicker button').forEach(b => {
+  b.addEventListener('click', () => { rebuildStarSystem(b.dataset.star); });
+});
+
+// Missions grid opening
+document.querySelector('.tab[data-page="missions"]').addEventListener('click', renderMissionGrid);
+
+// ============================================================
+// BADGE POSITIONING (project world→screen every frame)
+// ============================================================
+function updateBadges() {
+  for (const p of placedPlanets) {
+    if (!p.badgeEl) continue;
+    const wp = p.mesh.position.clone().project(camera);
+    if (wp.z > 1 || wp.z < -1) { p.badgeEl.style.display = 'none'; continue; }
+    p.badgeEl.style.display = 'block';
+    p.badgeEl.style.left = ((wp.x * 0.5 + 0.5) * window.innerWidth) + 'px';
+    p.badgeEl.style.top  = ((-wp.y * 0.5 + 0.5) * window.innerHeight - 22) + 'px';
+  }
+}
+
+// ============================================================
+// RESIZE
+// ============================================================
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  composer.setSize(window.innerWidth, window.innerHeight);
+  bloom.setSize(window.innerWidth, window.innerHeight);
+});
+
+// ============================================================
+// INIT + LOOP
+// ============================================================
+rebuildStarSystem('G');
+setTimeout(() => document.getElementById('loader').classList.add('hidden'), 400);
+
+let lastT = performance.now();
+function animate() {
+  const now = performance.now();
+  const dt  = Math.min(0.05, (now - lastT) / 1000);
+  lastT = now;
+
+  // Orbit placed planets — pause while dragging an organism so drop targets stay put
+  const freeze = (dragging && dragging.type === 'organism');
+  if (!freeze) {
+    for (const p of placedPlanets) {
+      p.angle += p.speed * dt;
+      p.mesh.position.set(Math.cos(p.angle) * p.distWorld, 0, Math.sin(p.angle) * p.distWorld);
+    }
+  }
+
+  // Flare tick + colour restore
+  tickFlares(dt);
+  restoreStarColour();
+
+  // HZ stays fixed — no drift, star reads as stationary.
+  controls.update();
+  updateBadges();
+  composer.render();
+  requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
+</script>
+</body>
+</html>
