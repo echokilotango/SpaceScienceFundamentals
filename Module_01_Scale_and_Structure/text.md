@@ -18,7 +18,7 @@ The Milky Way belongs to the **Local Group of galaxies**.
 The Local Group is part of a much larger structure associated with the **Laniakea Supercluster**.
 And beyond these structures lies the enormous **observable universe**.
 
-The difficulty is that our familiar units—metres and kilometres—quickly become inconvenient.
+The difficulty is that our familiar units - metres and kilometres, quickly become inconvenient.
 
 For example:
 
