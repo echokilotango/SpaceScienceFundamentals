@@ -1,1024 +1,366 @@
 # Module 3 — Stellar Classification and the Hertzsprung–Russell Diagram
 
-## 1. The Cosmic Map: The Hertzsprung–Russell Diagram
+## 1. Introduction: How Do We Describe a Star?
 
-Imagine trying to understand the lives of millions or billions of stars.
+The night sky contains an enormous variety of stars. Some appear blue-white and extremely hot, while others appear orange or red and much cooler. Some stars are extraordinarily luminous, while others emit comparatively little energy.
 
-A star is not simply a point of light. It has a temperature, a luminosity, a chemical composition, an internal structure, and a stage in its evolution.
+Astronomers therefore need a systematic way to describe and compare stars.
 
-The problem is that we cannot normally travel to a star and look inside it.
+Two quantities are especially important:
 
-So astronomers need a way to take the information they can observe from the outside and use it to understand what is happening inside.
+* **Luminosity** — how much energy a star emits per unit time.
+* **Effective temperature** — a measure of the temperature associated with the star's emitted radiation.
 
-One of the most powerful tools for doing this is the **Hertzsprung–Russell diagram**, usually called the **H–R diagram**.
+These quantities provide the foundation for one of the most useful diagrams in stellar astronomy: the **Hertzsprung–Russell diagram**, usually called the **H-R diagram**.
 
-The H–R diagram can be thought of as a **cosmic map of stellar lives**.
-
-It places stars according to two important observable properties:
-
-1. **Luminosity**
-2. **Effective temperature**
-
-By knowing where a star lies on this diagram, we can learn about its physical state and its evolutionary stage.
-
-The research material describes the H–R diagram as a coordinate system that allows us to follow a star's "biography" — from its initial contraction through its later evolutionary stages and eventually to its final remnant.
+The H-R diagram does much more than organize stars by temperature and luminosity. It provides a way to understand where stars are in their evolution and how their physical properties are related.
 
 ---
 
-## 2. Luminosity: How Much Energy a Star Produces
+# 2. The Hertzsprung–Russell Diagram
 
-The first quantity used by the H–R diagram is **luminosity**.
+The H-R diagram is a graphical representation of stellar properties.
 
-Luminosity describes the total energy output of a star per unit time.
+One axis represents **luminosity**, while the other represents **effective temperature**.
 
-In the stellar interior, the luminosity can be considered at a particular radius $r$. The research document describes this as the net energy per second passing outward through a sphere of radius $r$.
+The important feature to notice is that the temperature axis is conventionally arranged so that **hotter stars are toward the left and cooler stars are toward the right**.
 
-It is commonly written as $L_r$.
+This produces a diagram in which different groups of stars occupy recognizable regions.
 
-At the surface of the star, this becomes the star's total luminosity:
+The largest and most important concentration is the **main sequence**.
 
-$$
-l = L
-$$
+The main sequence extends diagonally across the diagram, running from hot, luminous stars toward cool, faint stars.
 
-So, conceptually:
+Other evolutionary stages occupy different regions of the diagram.
 
-> **Luminosity tells us how much energy the star is producing and sending outward.**
-
-This energy must travel through the stellar interior before eventually escaping from the surface.
-
-The material connects this to energy transport inside stars: temperature gradients drive the movement of energy through the stellar interior, and that energy eventually reaches the photosphere, where it is radiated away.
+The H-R diagram therefore becomes a map on which stellar evolution can be followed.
 
 ---
 
-## 3. Effective Temperature: How Hot Is the Surface?
+# 3. Luminosity
 
-The second major quantity is **effective temperature**.
+The first important quantity is **luminosity**.
 
-The effective temperature describes the temperature associated with the radiation emitted from the stellar surface.
+Luminosity describes the total energy emitted by a star per unit time.
 
-It is closely connected to the star's observed color.
+In other words, it represents the intrinsic power output of the star.
 
-A hotter star tends to emit more strongly at shorter wavelengths, giving it a bluer appearance.
+A star with a larger luminosity emits more energy per unit time than a star with a smaller luminosity.
 
-A cooler star emits more strongly at longer wavelengths, giving it a redder appearance.
-
-So we can build a simple picture:
-
-> **Hotter → shorter wavelengths → bluer appearance**
-
-and
-
-> **Cooler → longer wavelengths → redder appearance**
-
-The effective temperature is also closely connected to the star's **spectral classification**.
-
-This is why the H–R diagram is so useful.
-
-We are not simply putting stars on a graph.
-
-We are putting stars on a graph using quantities that tell us something physical about the stars themselves.
+Luminosity should not be confused with how bright a star appears in the sky. Apparent brightness also depends on distance. The H-R diagram is concerned with the intrinsic luminosity of the star.
 
 ---
 
-# 4. The Spectral Alphabet: O, B, A, F, G, K, M
+# 4. Effective Temperature
 
-Once astronomers began examining starlight carefully, they discovered that stars do not all have identical spectra.
+The second major quantity used in the H-R diagram is the **effective temperature**.
 
-A spectrum contains information about the physical conditions in the star's atmosphere.
+A star emits radiation over a range of wavelengths. Its effective temperature provides a way of characterizing the overall thermal state associated with that radiation.
 
-The research document emphasizes that the spectral sequence
+The effective temperature is particularly important because it is closely connected with the star's observed colour and spectral classification.
 
-$$
-O \rightarrow B \rightarrow A \rightarrow F \rightarrow G \rightarrow K \rightarrow M
-$$
+Hotter stars tend to appear toward the blue or blue-white part of the spectrum, while cooler stars tend toward yellow, orange, and red.
 
-is fundamentally a **temperature sequence**.
+Thus, the H-R diagram connects three things that can be observed or inferred about stars:
 
-It runs from the hottest stars to the coolest stars.
-
-The sequence is therefore not simply an arbitrary alphabet.
-
-The temperature of a star affects the physical state of matter in its atmosphere.
-
-In particular, temperature affects **ionization** — whether atoms have lost electrons — and therefore affects which spectral lines can appear.
-
-At sufficiently low temperatures, molecules can also form.
-
-These changes produce different spectral signatures.
+* their luminosity,
+* their effective temperature,
+* and their spectral characteristics.
 
 ---
 
-## 5. Why Temperature Changes the Spectrum
+# 5. Spectral Classification
 
-Think of the atoms in a stellar atmosphere as responding to the temperature around them.
+Stars are traditionally classified according to their spectra.
 
-At very high temperatures, atoms can become highly ionized because electrons are removed from them.
+The principal spectral sequence is:
 
-At lower temperatures, more electrons can remain bound to atoms.
+**O – B – A – F – G – K – M**
 
-The research document relates this behavior to the **Boltzmann and Saha formulae**, which describe how the state of matter changes with temperature and other physical conditions.
+This sequence is fundamentally a temperature sequence.
 
-This means that temperature determines which atoms, ions, and molecules are present in particular states.
+The stars in the O class are the hottest, while the stars in the M class are the coolest.
 
-Those particles then produce characteristic absorption features in the spectrum.
+Moving from O toward M therefore corresponds to decreasing stellar temperature.
 
-Therefore:
+The sequence can be remembered as:
 
-> **The spectrum becomes a fingerprint of the physical conditions in the star's atmosphere.**
+**O → B → A → F → G → K → M**
 
-This is why astronomers can classify stars by examining their spectra.
-
----
-
-# 6. The O-Type Stars
-
-At the hottest end of the sequence are **O-type stars**.
-
-The research document gives their temperatures as greater than approximately:
-
-$$
-30{,}000\ \mathrm{K}
-$$
-
-At these temperatures, ionization is very strong.
-
-The material identifies strong lines of ionized helium, specifically He II, as a defining spectral characteristic.
-
-These stars also have a blue appearance.
-
-So the picture for an O-type star is:
-
-* Extremely hot
-* Strong ionization
-* Strong He II spectral lines
-* Blue appearance
+with temperature decreasing from left to right.
 
 ---
 
-# 7. The B-Type Stars
+# 6. The O Stars
 
-Next come **B-type stars**.
+O-type stars occupy the hottest end of the spectral sequence.
 
-Their temperature range is approximately:
+They have extremely high effective temperatures and characteristic spectral features associated with highly excited atoms.
 
-$$
-10{,}000\ \mathrm{K} \; \text{to} \; 30{,}000\ \mathrm{K}
-$$
+Because of their high temperatures, they tend toward blue or blue-white colours.
 
-The research document identifies neutral helium, He I, as an important spectral characteristic.
+On the H-R diagram, O stars are found toward the hot, luminous end of the main sequence.
 
-Their color is described as blue-white.
-
-So as we move from O to B, the star becomes cooler, and the dominant spectral features change.
+Their position reflects the relationship between temperature, luminosity, and stellar mass.
 
 ---
 
-# 8. The A-Type Stars
+# 7. The B Stars
 
-A-type stars have temperatures of approximately:
+B-type stars are cooler than O-type stars but are still very hot.
 
-$$
-7{,}500\ \mathrm{K} \; \text{to} \; 10{,}000\ \mathrm{K}
-$$
+They are generally blue-white in appearance and occupy the hot portion of the H-R diagram.
 
-One of their defining characteristics is particularly strong hydrogen absorption in the **Balmer series**.
+They lie between O and A in the spectral sequence:
 
-They appear white.
+**O → B → A**
 
-This is an important example of why spectral classification is useful.
-
-The classification does not merely tell us a letter.
-
-It tells us something about the physical conditions in the star's atmosphere.
+As the sequence moves from O toward B and then A, stellar effective temperature decreases.
 
 ---
 
-# 9. The F-Type Stars
+# 8. The A Stars
 
-F-type stars occupy a cooler temperature range:
+A-type stars are cooler than O- and B-type stars.
 
-$$
-6{,}000\ \mathrm{K} \; \text{to} \; 7{,}500\ \mathrm{K}
-$$
+They are commonly associated with white or blue-white spectral characteristics.
 
-The research document identifies ionized calcium, Ca II, and neutral metals among their defining spectral characteristics.
+They occupy an intermediate position within the temperature sequence:
 
-Their color is described as yellow-white.
+**O → B → A → F**
 
----
-
-# 10. The G-Type Stars
-
-G-type stars have temperatures of approximately:
-
-$$
-5{,}200\ \mathrm{K} \; \text{to} \; 6{,}000\ \mathrm{K}
-$$
-
-They are described as **Sun-like** in the research document.
-
-Their spectra contain strong Ca II lines as well as neutral metal lines.
-
-Their appearance is yellow.
-
-The Sun therefore belongs to the G-type category.
+Their spectral characteristics reflect the changing temperature of the stellar atmosphere as one moves along the sequence.
 
 ---
 
-# 11. The K-Type Stars
+# 9. The F Stars
 
-K-type stars are cooler still:
+F-type stars are cooler than A-type stars and hotter than G-type stars.
 
-$$
-3{,}700\ \mathrm{K} \; \text{to} \; 5{,}200\ \mathrm{K}
-$$
+They occupy the next region of the spectral sequence:
 
-Their spectra are dominated by neutral metal lines.
+**A → F → G**
 
-They have an orange appearance.
+Their temperatures are therefore intermediate between the hotter A stars and the cooler G stars.
 
 ---
 
-# 12. The M-Type Stars
+# 10. The G Stars
 
-Finally, at the coolest end of the sequence are **M-type stars**.
+G-type stars occupy the middle portion of the O-B-A-F-G-K-M sequence.
 
-Their temperatures are below approximately:
+They are cooler than F-type stars but hotter than K-type stars.
 
-$$
-3{,}700\ \mathrm{K}
-$$
+The Sun belongs to the G-type category.
 
-At these lower temperatures, molecules can exist in stellar atmospheres.
+This makes the Sun useful as a reference point when thinking about the spectral sequence.
 
-The research document specifically mentions **titanium oxide (TiO)**.
+The sequence around the Sun is:
 
-These molecules produce distinctive molecular absorption bands.
+**F → G → K**
 
-M-type stars appear red.
+with temperature decreasing as we move from F toward K.
 
 ---
 
-## 13. The Entire Spectral Sequence
+# 11. The K Stars
 
-We can now see the sequence as one continuous temperature ladder:
+K-type stars are cooler than G-type stars.
 
-| Spectral Class | Approximate Temperature | Important Spectral Characteristic | Color        |
-| -------------- | ----------------------: | --------------------------------- | ------------ |
-| O              |              > 30,000 K | Ionized helium, He II             | Blue         |
-| B              |         10,000–30,000 K | Neutral helium, He I              | Blue-white   |
-| A              |          7,500–10,000 K | Strong hydrogen Balmer lines      | White        |
-| F              |           6,000–7,500 K | Ca II and neutral metals          | Yellow-white |
-| G              |           5,200–6,000 K | Ca II and neutral metals          | Yellow       |
-| K              |           3,700–5,200 K | Neutral metal lines               | Orange       |
-| M              |               < 3,700 K | Molecular bands such as TiO       | Red          |
+They tend toward orange colours and occupy the cooler part of the main sequence.
 
-These characteristics and temperature ranges are taken from the research document.
+They are located between G and M:
 
-A useful way to remember the order is:
+**G → K → M**
 
-**O B A F G K M**
-
-The important thing to remember, however, is not just the letters.
-
-The deeper idea is:
-
-> **The spectral sequence is fundamentally telling us about stellar temperature and the physical state of matter in the stellar atmosphere.**
+Thus, they are hotter than M-type stars but cooler than G-type stars.
 
 ---
 
-# 14. The Starting Line: The Zero-Age Main Sequence
+# 12. The M Stars
 
-Now we can return to the H–R diagram.
+M-type stars occupy the coolest end of the main spectral sequence.
 
-A star does not remain in the same place forever.
+They are associated with red colours and lower effective temperatures than the other classes in the O-B-A-F-G-K-M sequence.
 
-It evolves.
+The complete sequence is therefore:
 
-One important reference point in this evolution is the **Zero-Age Main Sequence**, or **ZAMS**.
+**O → B → A → F → G → K → M**
 
-The ZAMS can be thought of as the starting line of a star's stable adult life.
+with effective temperature decreasing from O to M.
 
-According to the research document, a star reaches the ZAMS when its initial contraction has ended and the nuclear timescale becomes the dominant evolutionary timescale instead of the Kelvin–Helmholtz timescale.
-
-The star is now supported by a balance between the inward pull of gravity and the pressure acting outward.
-
-This condition is called **hydrostatic equilibrium**.
+This sequence is one of the fundamental organizational tools used in stellar astronomy.
 
 ---
 
-# 15. Hydrostatic Equilibrium: Gravity Versus Pressure
+# 13. Temperature and Stellar Colour
 
-Imagine a star as an enormous sphere of gas.
+The spectral sequence is not simply a naming convention.
 
-Gravity is constantly trying to pull all of the material inward toward the center.
+It reflects a physical difference between stars.
 
-If gravity acted alone, the star would collapse.
+A star's temperature affects the radiation it emits and therefore influences its observed spectral characteristics and colour.
 
-But inside the star there is pressure pushing outward.
+The hotter stars occupy the O and B categories and tend toward blue or blue-white appearance.
 
-The star can remain stable when these effects balance.
+Intermediate-temperature stars include A, F, and G stars.
 
-This is the basic idea behind hydrostatic equilibrium.
+Cooler stars include K and M stars, which tend toward orange and red colours.
 
-The research document gives the Eulerian form of this balance as:
+The H-R diagram therefore provides a visual connection between a star's temperature and its position among different spectral classes.
 
-$$
-\frac{\partial P}{\partial r}
-=
--g\rho
-=
--\frac{Gm}{r^2}\rho
-$$
+---
+
+# 14. The Main Sequence
+
+The **main sequence** is the dominant band of stars on the H-R diagram.
+
+Stars on the main sequence are in a state of **hydrostatic equilibrium**.
+
+Hydrostatic equilibrium means that the inward pull of gravity is balanced by the pressure acting outward within the star.
+
+The condition can be expressed as:
+
+$\frac{\partial P}{\partial r} = -g\rho = -\frac{Gm}{r^2}\rho$
 
 Here:
 
 * $P$ is pressure.
-* $r$ is the distance from the center of the star.
-* $g$ is the local gravitational acceleration.
-* $\rho$ is the density.
+* $r$ is radial distance from the centre of the star.
+* $g$ is gravitational acceleration.
+* $\rho$ is density.
 * $G$ is the gravitational constant.
-* $m$ is the mass enclosed within radius $r$.
+* $m$ is the mass contained within radius $r$.
 
-The negative sign is important.
+The equation describes how pressure changes with distance from the centre of a star.
 
-It tells us that pressure decreases as we move outward through the star.
+Gravity pulls material inward, while the pressure gradient provides the opposing effect.
 
-The same hydrostatic condition can also be written in **Lagrangian form**, using enclosed mass $m$ as the coordinate:
+A second form of the hydrostatic-equilibrium relation is:
 
-$$
-\frac{\partial P}{\partial m}
-=
--\frac{Gm}{4\pi r^4}
-$$
+$\frac{\partial P}{\partial m} = -\frac{Gm}{4\pi r^4}$
 
-These are two ways of describing the same basic equilibrium condition.
+This expresses the pressure gradient in terms of enclosed mass rather than radial position.
+
+Hydrostatic equilibrium is one of the fundamental conditions that allows a star to maintain its structure.
 
 ---
 
-# 16. What Is Actually Providing the Pressure?
+# 15. Radiation Pressure
 
-The outward support inside a star is not necessarily from one single source.
+Pressure inside a star is not necessarily produced only by ordinary gas particles.
 
-The research document identifies two major components:
+Radiation can also contribute to the pressure.
 
-### Gas pressure
+The radiation pressure is expressed as:
 
-Gas pressure can be considered as contributions from ions and electrons:
-
-$$
-P_{\mathrm{gas}}
-=
-P_{\mathrm{ion}}
-+
-P_e
-$$
+$P_{rad} = \frac{1}{3}aT^4$
 
 where:
 
-* $P_{\mathrm{ion}}$ is the pressure associated with ions.
-* $P_e$ is the electron pressure.
-
-### Radiation pressure
-
-Radiation can also contribute pressure.
-
-The research document gives:
-
-$$
-P_{\mathrm{rad}}
-=
-\frac{1}{3}aT^4
-$$
-
-where:
-
-* $P_{\mathrm{rad}}$ is radiation pressure.
+* $P_{rad}$ is radiation pressure.
 * $a$ is the radiation density constant.
 * $T$ is temperature.
 
-So the internal structure of a star is a competition between gravity trying to compress the star and pressure providing support.
+The strong dependence on temperature is important because the radiation pressure increases rapidly as temperature increases.
+
+The radiation density constant used in the research document is:
+
+$a = 7.57 \times 10^{-15}\ \mathrm{erg\ cm^{-3}\ K^{-4}}$
 
 ---
 
-# 17. Mass Is Destiny: The Mass–Luminosity Connection
+# 16. Central Pressure
 
-Now we reach one of the most important ideas in stellar classification.
+The conditions near the centre of a star are extremely different from those at its surface.
 
-A star's **mass** strongly influences its life.
+A useful approximation for the central pressure is:
 
-The research document describes the initial mass of a star as its **chronometer** — essentially, the quantity that determines the pace at which its stellar biography unfolds.
-
-Why?
-
-Because the mass of the star affects the pressure and temperature that must exist inside it to maintain hydrostatic equilibrium.
-
-A more massive star requires greater pressure to prevent gravitational collapse.
-
-This leads to higher central temperatures.
-
-The research document gives the approximate relationship:
-
-$$
-P_c
-\approx
-\frac{2GM^2}{\pi R^4}
-$$
-
-where $P_c$ is the central pressure, $M$ is the stellar mass, $R$ is the stellar radius, and $G$ is the gravitational constant.
-
-The material also gives the proportionality:
-
-$$
-T_c
-\propto
-\frac{M}{R}
-$$
-
-So, in the framework presented by the research document:
-
-> Higher mass → higher central pressure → higher central temperature.
-
-This affects how quickly the star consumes its nuclear fuel.
-
-The result is that mass is strongly connected to how quickly a star moves through its life.
-
----
-
-# 18. The Sun as an Example
-
-The research document gives values from a standard solar model.
-
-For a star with one solar mass, the central pressure is approximately:
-
-$$
-P_c
-\approx
-2.4\times10^{17}\ \mathrm{dyn\ cm^{-2}}
-$$
-
-and the central temperature is approximately:
-
-$$
-T_c
-\approx
-1.6\times10^7\ \mathrm{K}
-$$
-
-These numbers give us a sense of the extreme physical conditions inside a star like the Sun.
-
----
-
-# 19. Why Mass Controls the Pace of Stellar Life
-
-The important conceptual point is not simply that massive stars contain more material.
-
-A larger mass means stronger gravitational compression.
-
-Stronger compression requires greater internal pressure for the star to remain in equilibrium.
-
-That leads to higher central temperatures.
-
-The research document then connects this to nuclear fuel consumption:
-
-> Massive stars consume their nuclear fuel at a much faster rate.
-
-Therefore, mass and stellar lifespan are inversely related in the framework presented by the material:
-
-> **Higher mass → faster evolution → shorter stellar lifespan.**
-
-The most massive stars therefore have the shortest stellar biographies.
-
----
-
-# 20. The Mirror Principle: When the Core Changes, the Envelope Responds
-
-A star's life does not stop when its central fuel changes.
-
-Eventually, the star evolves.
-
-One of the important ideas used to describe this evolution is the **Mirror Principle**.
-
-The research document connects this principle to the **Virial Theorem** and conservation of energy.
-
-The total energy is written as:
-
-$$
-W
-=
-E_i
-+
-E_g
-$$
+$P_c \approx \frac{2GM^2}{\pi R^4}$
 
 where:
 
-* $W$ is the total energy.
-* $E_i$ is internal energy.
-* $E_g$ is gravitational energy.
+* $P_c$ is the central pressure.
+* $G$ is the gravitational constant.
+* $M$ is the stellar mass.
+* $R$ is the stellar radius.
 
-The key idea is what happens when the core contracts.
+This relation shows how strongly the central pressure depends on the mass and radius of a star.
 
----
+For the Sun, the research document gives the approximate central pressure as:
 
-# 21. Core Exhaustion
+$P_c \approx 2.4 \times 10^{17}\ \mathrm{dyn\ cm^{-2}}$
 
-Imagine that the star's central nuclear fuel becomes depleted.
-
-The core can no longer maintain the same conditions through the previous nuclear burning process.
-
-The core contracts.
-
-As the core contracts, its gravitational energy changes.
-
-The decrease in gravitational energy releases energy.
-
-The research document gives the relationship:
-
-$$
-L
-=
--(\gamma-1)
-\frac{dE_g}{dt}
-$$
-
-For a monatomic gas:
-
-$$
-\gamma
-=
-\frac{5}{3}
-$$
-
-According to the research document, approximately half of the liberated energy heats the core, while the other half is either radiated away or contributes to the expansion of the outer layers.
+This enormous pressure exists because the material near the centre must support the weight of the material above it.
 
 ---
 
-# 22. The "Mirror" Effect
+# 17. Central Temperature
 
-This produces a striking relationship.
+The central temperature is also related to the star's mass and radius.
 
-The core contracts.
+The research document gives the proportionality:
 
-At the same time, the outer envelope expands.
+$T_c \propto \frac{M}{R}$
 
-So we have:
+where $T_c$ is the central temperature.
 
-**Core:**
+This relationship means that increasing stellar mass relative to radius is associated with a higher central temperature.
 
-* Contracts
-* Becomes denser
-* Becomes hotter
+For the Sun, the research document gives:
 
-**Envelope:**
+$T_c \approx 1.6 \times 10^7\ \mathrm{K}$
 
-* Expands
-* Becomes more extended
-* Becomes cooler
-
-This is the essence of the **Mirror Principle** described in the research document.
-
-The star therefore moves toward the **Red Giant branch** on the H–R diagram.
-
-This is one of the reasons the H–R diagram is more than a classification chart.
-
-It can also act as a map of stellar evolution.
+The high central temperature is essential to the physical conditions found inside a star.
 
 ---
 
-# 23. The Hayashi Line: The Forbidden Zone
+# 18. The Gravitational Constant
 
-There is another important feature of the H–R diagram called the **Hayashi Line**.
+The gravitational constant used in the research document is:
 
-The research document describes the Hayashi Line as a kind of **forbidden zone boundary** for fully convective stellar models.
+$G = 6.673 \times 10^{-8}\ \mathrm{dyn\ cm^2\ g^{-2}}$
 
-For a given mass, no hydrostatic-equilibrium solution exists to the right of this line, corresponding to lower surface temperatures.
+This constant appears in the equations describing the gravitational structure of a star.
 
-This gives the Hayashi Line a special meaning.
-
-It is not merely a line drawn on a diagram for convenience.
-
-It represents a physical boundary on the possible structure of a star.
+It connects the amount of mass present to the strength of the gravitational interaction.
 
 ---
 
-# 24. Why Convection Becomes Important
+# 19. The Universal Gas Constant
 
-As a star approaches the Hayashi limit, the opacity of the material increases.
+The research document gives the gas constant in the form:
 
-Radiative transport becomes inefficient.
+$\mathcal{R} = 8.315 \times 10^7\ \mathrm{erg\ K^{-1}\ g^{-1}}$
 
-When radiation cannot transport energy efficiently enough, another mechanism becomes important:
-
-**convection**.
-
-Convection transports energy through the movement of material.
-
-The research document describes this transition as follows:
-
-> As opacity increases, radiative energy transport becomes inefficient, and convection becomes the dominant energy transport mechanism.
-
-This gives us an important connection:
-
-$$
-\text{Increasing opacity}
-\rightarrow
-\text{less efficient radiative transport}
-\rightarrow
-\text{convection becomes important}
-$$
+The gas constant appears in descriptions of the thermodynamic state of stellar material.
 
 ---
 
-# 25. The Journey of a Young Star
+# 20. Mean Molecular Weight
 
-The Hayashi Line also helps describe the early evolution of a forming star.
+The research document uses the symbol $\mu$ for the **mean molecular weight**.
 
-According to the research document, a star forming from a protostellar cloud initially descends along the Hayashi Line while it is fully convective.
+The mean molecular weight describes the average mass associated with the particles making up the stellar gas.
 
-Later, it moves toward the left, toward the ZAMS, once its interior becomes hot enough for radiative transport to take over.
+A related quantity, $\mu_e$, is used for the electron mean molecular weight.
 
-So the star's journey involves a change in its dominant energy-transport mechanism.
-
-Initially:
-
-**Convection dominates.**
-
-Later:
-
-**Radiative transport becomes important.**
-
-This is another example of how the position of a star on the H–R diagram reflects physical processes occurring deep inside it.
+These quantities become important when describing the thermodynamic properties of stellar material.
 
 ---
 
-# 26. Important Constants and Timescales
+# 21. Mass and Stellar Structure
 
-The research document provides several important constants and reference values in CGS units.
+One of the most important ideas in the research document is the relationship between **stellar mass and internal conditions**.
 
-### Gravitational constant
+The mass of a star affects its gravitational structure.
 
-$$
-G
-=
-6.673\times10^{-8}
-\ \mathrm{dyn\ cm^2\ g^{-2}}
-$$
+A more massive star experiences stronger gravitational effects. This influences the pressure and temperature required to maintain equilibrium.
 
-### Radiation density constant
+The central-temperature relation:
 
-$$
-a
-=
-7.57\times10^{-15}
-\ \mathrm{erg\ cm^{-3}\ K^{-4}}
-$$
+$T_c \propto \frac{M}{R}$
 
-### Universal gas constant
+provides a simple way of seeing this relationship.
 
-$$
-\mathcal{R}
-=
-8.315\times10^7
-\ \mathrm{erg\ K^{-1}\ g^{-1}}
-$$
-
-These constants appear in the equations used to describe stellar structure.
-
----
-
-# 27. Stellar Timescales
-
-Stars evolve over enormous periods of time, but different physical processes operate on very different timescales.
-
-The research document highlights two particularly important timescales.
-
-### Hydrostatic timescale
-
-For the Sun, the hydrostatic timescale is approximately:
-
-$$
-\tau_{\mathrm{hydr}}
-\approx
-27\ \mathrm{minutes}
-$$
-
-### Kelvin–Helmholtz timescale
-
-For the Sun, the Kelvin–Helmholtz timescale is approximately:
-
-$$
-\tau_{\mathrm{KH}}
-\approx
-1.6\times10^7\ \mathrm{years}
-$$
-
-These represent very different physical processes.
-
-The hydrostatic timescale is associated with how quickly a star could respond dynamically to a disturbance in its gravitational-pressure balance.
-
-The Kelvin–Helmholtz timescale is associated with the thermal evolution of the star.
-
-The research document uses these timescales when describing the transition of a forming star toward the ZAMS.
-
----
-
-# 28. Mean Molecular Weight
-
-Another quantity that becomes important as a star evolves is the **mean molecular weight**, represented by $\mu$.
-
-The research material also identifies $\mu_e$, the mean molecular weight per free electron.
-
-As hydrogen is processed into helium, these quantities change.
-
-Therefore, the changing chemical composition of the stellar interior affects the physical conditions inside the star.
-
-This is another reason stellar evolution cannot be understood simply by looking at the surface.
-
-Changes taking place deep inside the star eventually affect the star's observable properties.
-
----
-
-# 29. Putting the H–R Diagram Together
-
-We can now see why the H–R diagram is so powerful.
-
-It combines two observable properties:
-
-$$
-\text{Luminosity}
-$$
-
-and
-
-$$
-\text{Effective Temperature}
-$$
-
-The temperature also connects directly to spectral classification:
-
-$$
-O \rightarrow B \rightarrow A \rightarrow F \rightarrow G \rightarrow K \rightarrow M
-$$
-
-Meanwhile, the star's location on the diagram can be connected to its evolutionary state.
-
-The diagram therefore becomes a bridge between:
-
-**What we observe**
-
-and
-
-**What is happening inside the star.**
-
----
-
-# 30. The Complete Stellar Story
-
-Let's now tell the whole story as one continuous sequence.
-
-A star begins its life in a contracting state.
-
-As the star contracts, gravitational energy is involved in determining its thermal state.
-
-Eventually, the star reaches a stable configuration.
-
-The star arrives at the **Zero-Age Main Sequence**.
-
-At this stage, hydrostatic equilibrium balances gravity and pressure.
-
-Its mass determines the central pressure and temperature and strongly influences how rapidly the star consumes its nuclear fuel.
-
-The star can then be placed on the H–R diagram according to its luminosity and effective temperature.
-
-Its temperature also determines its spectral classification.
-
-A very hot star belongs near the O end of the spectral sequence.
-
-A cooler star belongs progressively closer to the M end.
-
-As the star evolves, conditions in its interior change.
-
-Eventually, changes in the core can cause the core to contract.
-
-Through the Mirror Principle, contraction of the core is associated with expansion of the envelope.
-
-The outer layers become more extended and cooler, and the star moves toward the Red Giant region of the H–R diagram.
-
-At still other stages, energy transport can change.
-
-If opacity becomes sufficiently high, radiative transport becomes inefficient and convection becomes important.
-
-The Hayashi Line marks an important boundary for fully convective stellar models.
-
-Thus, the H–R diagram is not merely a graph of stars.
-
-It is a map connecting:
-
-* Temperature
-* Luminosity
-* Spectral classification
-* Internal structure
-* Energy transport
-* Mass
-* Evolutionary stage
-
----
-
-# 31. A Conceptual Map
-
-The main ideas of this module can be connected as follows:
-
-```text
-                    STELLAR CLASSIFICATION
-                            |
-                            v
-                    H–R DIAGRAM
-                     /          \
-                    /            \
-                   v              v
-             Luminosity      Temperature
-                                  |
-                                  v
-                        Spectral Classification
-                                  |
-                    O → B → A → F → G → K → M
-                                  |
-                                  v
-                         Physical Conditions
-                           in Atmosphere
-```
-
-And the evolutionary side can be connected as:
-
-```text
-        Forming Star
-             |
-             v
-       Initial Contraction
-             |
-             v
-          ZAMS
-             |
-             v
-    Hydrostatic Equilibrium
-             |
-             v
-       Stellar Evolution
-             |
-             v
-       Core Changes
-             |
-             v
-      Core Contraction
-             |
-             v
-      Envelope Expansion
-             |
-             v
-        Red Giant
-```
-
-Energy transport provides another connection:
-
-```text
-Increasing Opacity
-        |
-        v
-Radiative Transport
-becomes inefficient
-        |
-        v
-     Convection
-becomes important
-        |
-        v
-     Hayashi Limit
-```
-
----
-
-# 32. The Most Important Ideas to Remember
-
-If you remember only the conceptual structure of this module, remember these:
-
-### 1. The H–R diagram is a stellar map
-
-It places stars according to luminosity and effective temperature.
-
-### 2. Spectral class is strongly connected to temperature
-
-The sequence is:
-
-$$
-O \rightarrow B \rightarrow A \rightarrow F \rightarrow G \rightarrow K \rightarrow M
-$$
-
-from hottest to coolest.
-
-### 3. Spectral lines reveal physical conditions
-
-Temperature changes ionization and therefore changes which spectral features appear.
-
-### 4. ZAMS is the starting point of stable stellar life
-
-It marks the stage at which initial contraction has ended and nuclear evolution becomes dominant.
-
-### 5. Hydrostatic equilibrium is a balance
-
-Gravity pulls inward while pressure provides support:
-
-$$
-\frac{\partial P}{\partial r}
-=
--\frac{Gm}{r^2}\rho
-$$
-
-### 6. Mass controls the pace of stellar evolution
-
-Greater mass is associated with greater central pressure and temperature and a faster consumption of nuclear fuel.
-
-### 7. The Mirror Principle connects the core and envelope
-
-Core contraction is associated with envelope expansion.
-
-### 8. The Hayashi Line is a physical boundary
-
-It marks the boundary for fully convective hydrostatic stellar models.
-
-### 9. Energy transport can change
-
-Increasing opacity can make radiative transport inefficient, causing convection to become dominant.
-
----
-
-# 33. Discussion and Research Questions
-
-1. Why is the H–R diagram more than simply a graph of stellar temperatures and luminosities?
-
-2. Why does the spectral sequence run from O to M as temperature decreases?
-
-3. Why does temperature affect the spectral lines observed from a star?
-
-4. What does hydrostatic equilibrium mean physically?
-
-5. Explain the meaning of each term in:
-
-$$
-\frac{\partial P}{\partial r}
-=
--\frac{Gm}{r^2}\rho
-$$
-
-6. Why does increasing stellar mass lead to higher central pressure and temperature?
-
-7. Why does a higher-mass star consume its nuclear fuel more rapidly according to the research material?
-
-8. Explain the Mirror Principle using the relationship between the core and the stellar envelope.
-
-9. Why does the star move toward the Red Giant region when the core contracts?
-
-10. What is the physical meaning of the Hayashi Line?
-
-11. Why does increasing opacity make radiative transport less efficient?
-
-12. Why does convection become important when radiative transport is inefficient?
-
-13. What happens to a forming star as it moves from the Hayashi Line toward the ZAMS?
-
-14. How does changing chemical composition affect the mean molecular weight?
-
-15. How does the H–R diagram allow astronomers to connect observable stellar properties with internal stellar evolution?
-
----
-
-# 34. Final Perspective
-
-A star may look like nothing more than a point of light in the night sky.
-
-But that point contains information.
-
-Its brightness tells us about its luminosity.
-
-Its color and spectrum tell us about its temperature.
-
-Its spectral lines tell us about the physical state of matter in its atmosphere.
-
-Its position on the H–R diagram gives us a way to place it within the larger story of stellar evolution.
-
-And behind all of these observable properties is the hidden structure of the star itself:
-
-gravity pulling inward,
-
-pressure pushing outward,
-
-energy moving through the interior,
-
-the core changing with time,
-
-and the outer envelope responding to those changes.
-
-The H–R diagram brings these pieces together.
-
-It turns the stars in the sky into a **map of stellar lives**.
+The stellar mass therefore has consequences that extend far beyond simply determining how much material the star conta
