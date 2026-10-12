@@ -1,10 +1,6 @@
 EARTH–SUN–MOON DYNAMICS
 AND LUNAR SCIENCE
 
-A narrative training manual with a reconstructed source guide
-
-Purpose. This edition preserves the original document’s ten-part scope while recasting it as a connected professional narrative. Explanations are written for an informed non-specialist: technical terms are retained, then explained in context. A source audit follows the narrative. It distinguishes references that can be identified from sources that merely support the same claims.
-
 # Part I — The story of the Earth–Moon system
 
 ## 1. Foundations: gravity builds the system
