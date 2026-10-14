@@ -1,6 +1,5 @@
-# Cosmic Hierarchy: From Earth to the Observable Universe (Corrected)
+# Cosmic Hierarchy: From Earth to the Observable Universe 
 
-Oct 14, 2026
 
 ## 1. Executive Summary
 
