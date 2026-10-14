@@ -123,15 +123,8 @@ Human intuition handles exponential growth poorly, so logarithmic thinking helps
 | Milky Way star count | 100–400 billion |
 | Age of the universe | 13.8 billion years |
 
-## 7. Discussion and Research Questions
 
-1. **Computational efficiency.** What mathematical complications arise when computing galactic orbital dynamics in kilometres instead of parsecs?
-2. **Expansion paradox.** The universe is 13.8 billion years old, yet its observable radius is 46.5 billion ly. Explain using comoving distance.
-3. **Scale modelling.** With Earth shrunk to a penny, calculate the distances to the Sun and to Proxima Centauri in kilometres. (Check: about 0.22 km and about 60,000 km.)
-4. **Orbital spacing.** Compare the AU spacing of the Jovian and terrestrial planets. What does it suggest about early Solar System formation?
-5. **Gravitational confinement.** Contrast the bound Local Group with the larger Laniakea Supercluster in terms of dark-energy-driven expansion.
-
-## 8. Source Documentation
+## 7. Source Documentation
 
 The sources below are carried over from the original draft and were not re-opened for this revision. Confirm each against the cited body before relying on it.
 
