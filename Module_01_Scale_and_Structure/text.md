@@ -8,7 +8,7 @@
 
 We live on a planet whose size already feels enormous.
 
-Earth has an equatorial diameter of about **12,742 km**. Crossing a large country can take many hours, and travelling around Earth requires tens of thousands of kilometres.
+Earth has an equatorial diameter of about **12,756 km**. Crossing a large country can take many hours, and travelling around Earth requires tens of thousands of kilometres.
 
 Yet Earth is only one small part of a much larger hierarchy of structures.
 
@@ -215,7 +215,7 @@ The Sun would be more than **200 m away** from the model Earth.
 
 Now consider the nearest star.
 
-On this same scale, Proxima Centauri would be tens of thousands of kilometres away—more than **55,000 km** according to the model described in the research material.
+On this same scale, Proxima Centauri would be tens of thousands of kilometres away—nearly **60,000 km** according to the model described in the research material.
 
 This illustrates an important feature of cosmic structure:
 
@@ -234,7 +234,7 @@ We can begin our cosmic hierarchy at home.
 Earth has an equatorial diameter of approximately:
 
 $$
-12,742\ \mathrm{km}
+12,756\ \mathrm{km}
 $$
 
 The Moon has a diameter of approximately:
@@ -416,7 +416,7 @@ $$
 The stellar disk has a thickness on the order of:
 
 $$
-1\text{–}3\ \mathrm{kpc}
+\~0.3\ \mathrm{kpc}
 $$
 
 This gives us an enormous jump in scale.
@@ -706,7 +706,7 @@ $$
 4.4\times10^{26}\ \mathrm{m}
 $$
 
-The difference between these scales is approximately **27 orders of magnitude**.
+The difference between these scales is approximately **26 orders of magnitude**.
 
 That means the observable universe's radius is enormously larger than the scale of an individual human.
 
